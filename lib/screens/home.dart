@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:alarm/alarm.dart';
+import 'package:get/get.dart';
 import 'package:timeline/screens/edit_alarm.dart';
 import 'package:timeline/screens/ring.dart';
+import 'package:timeline/screens/take_picture.dart';
 import 'package:timeline/widgets/tile.dart';
 import 'package:flutter/material.dart';
 
@@ -100,7 +102,7 @@ class _ExampleAlarmHomeScreenState extends State<ExampleAlarmHomeScreen> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(10),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             FloatingActionButton(
               onPressed: () {
@@ -115,6 +117,14 @@ class _ExampleAlarmHomeScreenState extends State<ExampleAlarmHomeScreen> {
               backgroundColor: Colors.red,
               heroTag: null,
               child: const Text("RING NOW", textAlign: TextAlign.center),
+            ),
+            FloatingActionButton(
+              onPressed: () {
+                // Get.to(() => TakePictureScreen(camera: camera))
+              },
+              backgroundColor: Colors.green,
+              heroTag: null,
+              child: const Icon(Icons.camera_alt),
             ),
             FloatingActionButton(
               onPressed: () => navigateToAlarmScreen(null),

@@ -19,6 +19,7 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
   ScreenshotController _screenshotController = ScreenshotController();
   late Uint8List _imageFile;
   String currentTime = '';
+  String currentDate = '';
 
   @override
   void initState() {
@@ -30,12 +31,49 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
     String currentYear = '${DateTime.now().year}';
     String currentMonth = DateTime.now().month < 10 ? '0${DateTime.now().month}' : '${DateTime.now().month}';
     String currentDay = DateTime.now().day < 10 ? '0${DateTime.now().day}' : '${DateTime.now().day}';
-    String currentHour = DateTime.now().hour < 10 ? '0${DateTime.now().hour}' : '${DateTime.now().hour}';
+    String currentHour = '';
     String currentMinute = DateTime.now().minute < 10 ? '0${DateTime.now().minute}' : '${DateTime.now().minute}';
-    String currentSecond = DateTime.now().second < 10 ? '0${DateTime.now().second}' : '${DateTime.now().second}';
+    String currentWeekDay = '월';
+    String currentTimeText = '오전';
 
+    switch(DateTime.now().weekday) {
+      case 0:
+        currentWeekDay = '일';
+        break;
+      case 1:
+        currentWeekDay = '월';
+        break;
+      case 2:
+        currentWeekDay = '화';
+        break;
+      case 3:
+        currentWeekDay = '수';
+        break;
+      case 4:
+        currentWeekDay = '목';
+        break;
+      case 5:
+        currentWeekDay = '금';
+        break;
+      case 6:
+        currentWeekDay = '토';
+        break;
+    }
+
+    if (DateTime.now().hour <= 12) {
+      currentTimeText = '오전';
+
+      if (DateTime.now().hour == 12) {
+        currentTimeText = '오후';
+      }
+      currentHour = '${DateTime.now().hour}';
+    } else {
+      currentTimeText = '오후';
+      currentHour = '${DateTime.now().hour - 12}';
+    }
     setState(() {
-      currentTime = '$currentYear/$currentMonth/$currentDay $currentHour:$currentMinute:$currentSecond';
+      currentTime = '$currentTimeText $currentHour:$currentMinute';
+      currentDate = '$currentYear년 $currentMonth월 $currentDay일 ($currentWeekDay)';
     });
   }
 
@@ -66,38 +104,39 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
           ? Screenshot(
         controller: _screenshotController,
         child: Stack(
+          alignment: Alignment.center,
           children: [
             Image.file(File(widget.imagePath)),
-            Positioned(
-              right: 20,
-              bottom: 20,
-              child: Column(
-                children: [
-                  const Text('GEODIS',
-                      style: TextStyle(
-                          shadows: [
-                            Shadow(
-                                color: Colors.white,
-                                offset: Offset(1, 1),
-                                blurRadius: 4)
-                          ],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25,
-                          color: Colors.blue)),
-                  Text(
-                      currentTime,
-                      style: const TextStyle(
-                          shadows: [
-                            Shadow(
-                                color: Colors.black87,
-                                offset: Offset(1, 1),
-                                blurRadius: 4)
-                          ],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25,
-                          color: Colors.yellow)),
-                ],
-              ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                    currentTime,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        shadows: [
+                          Shadow(
+                              color: Colors.black87,
+                              offset: Offset(1, 1),
+                              blurRadius: 4)
+                        ],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 50,
+                        color: Colors.white)),
+                Text(
+                    currentDate,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        shadows: [
+                          Shadow(
+                              color: Colors.black87,
+                              offset: Offset(1, 1),
+                              blurRadius: 4)
+                        ],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                        color: Colors.white)),
+              ],
             )
           ],
         ),

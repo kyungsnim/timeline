@@ -26,7 +26,8 @@ class TakePictureScreen extends StatefulWidget {
 class TakePictureScreenState extends State<TakePictureScreen> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
-
+  String currentTime = '';
+  String currentDate = '';
 
   @override
   void initState() {
@@ -38,9 +39,59 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       // 적용할 해상도를 지정합니다.
       ResolutionPreset.medium,
     );
-
+    getCurrentTime();
     // 다음으로 controller를 초기화합니다. 초기화 메서드는 Future를 반환합니다.
     _initializeControllerFuture = _controller.initialize();
+  }
+
+  getCurrentTime() {
+    String currentYear = '${DateTime.now().year}';
+    String currentMonth = DateTime.now().month < 10 ? '0${DateTime.now().month}' : '${DateTime.now().month}';
+    String currentDay = DateTime.now().day < 10 ? '0${DateTime.now().day}' : '${DateTime.now().day}';
+    String currentHour = '';
+    String currentMinute = DateTime.now().minute < 10 ? '0${DateTime.now().minute}' : '${DateTime.now().minute}';
+    String currentWeekDay = '월';
+    String currentTimeText = '오전';
+
+    switch(DateTime.now().weekday) {
+      case 0:
+        currentWeekDay = '일';
+        break;
+      case 1:
+        currentWeekDay = '월';
+        break;
+      case 2:
+        currentWeekDay = '화';
+        break;
+      case 3:
+        currentWeekDay = '수';
+        break;
+      case 4:
+        currentWeekDay = '목';
+        break;
+      case 5:
+        currentWeekDay = '금';
+        break;
+      case 6:
+        currentWeekDay = '토';
+        break;
+    }
+
+    if (DateTime.now().hour <= 12) {
+      currentTimeText = '오전';
+
+      if (DateTime.now().hour == 12) {
+        currentTimeText = '오후';
+      }
+      currentHour = '${DateTime.now().hour}';
+    } else {
+      currentTimeText = '오후';
+      currentHour = '${DateTime.now().hour - 12}';
+    }
+    setState(() {
+      currentTime = '$currentTimeText $currentHour:$currentMinute';
+      currentDate = '$currentYear년 $currentMonth월 $currentDay일 ($currentWeekDay)';
+    });
   }
 
   @override
@@ -62,9 +113,42 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           if (snapshot.connectionState == ConnectionState.done) {
             // Future가 완료되면, 프리뷰를 보여줍니다.
             return Stack(
+              alignment: Alignment.center,
               children: [
-                CameraPreview(_controller),
-
+                AspectRatio(
+                    aspectRatio: 9/16,
+                    child: CameraPreview(_controller)),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                        currentTime,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            shadows: [
+                              Shadow(
+                                  color: Colors.black87,
+                                  offset: Offset(1, 1),
+                                  blurRadius: 4)
+                            ],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 50,
+                            color: Colors.white)),
+                    Text(
+                        currentDate,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            shadows: [
+                              Shadow(
+                                  color: Colors.black87,
+                                  offset: Offset(1, 1),
+                                  blurRadius: 4)
+                            ],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25,
+                            color: Colors.white)),
+                  ],
+                )
               ],
             );
           } else {

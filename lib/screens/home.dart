@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:alarm/alarm.dart';
+import 'package:camera/camera.dart';
 import 'package:get/get.dart';
 import 'package:timeline/screens/edit_alarm.dart';
 import 'package:timeline/screens/ring.dart';
@@ -17,13 +18,14 @@ class ExampleAlarmHomeScreen extends StatefulWidget {
 
 class _ExampleAlarmHomeScreenState extends State<ExampleAlarmHomeScreen> {
   late List<AlarmSettings> alarms;
-
+  var firstCamera;
   static StreamSubscription? subscription;
 
   @override
   void initState() {
     super.initState();
     loadAlarms();
+    getCamera();
     subscription ??= Alarm.ringStream.stream.listen(
           (alarmSettings) => navigateToRingScreen(alarmSettings),
     );
@@ -34,6 +36,14 @@ class _ExampleAlarmHomeScreenState extends State<ExampleAlarmHomeScreen> {
       alarms = Alarm.getAlarms();
       alarms.sort((a, b) => a.dateTime.isBefore(b.dateTime) ? 0 : 1);
     });
+  }
+
+  getCamera() async {
+    // 디바이스에서 이용가능한 카메라 목록을 받아옵니다.
+    final cameras = await availableCameras();
+
+    // 이용가능한 카메라 목록에서 특정 카메라를 얻습니다.
+    firstCamera = cameras.first;
   }
 
   Future<void> navigateToRingScreen(AlarmSettings alarmSettings) async {
@@ -120,7 +130,7 @@ class _ExampleAlarmHomeScreenState extends State<ExampleAlarmHomeScreen> {
             ),
             FloatingActionButton(
               onPressed: () {
-                // Get.to(() => TakePictureScreen(camera: camera))
+                Get.to(() => TakePictureScreen(camera: firstCamera));
               },
               backgroundColor: Colors.green,
               heroTag: null,
@@ -136,4 +146,6 @@ class _ExampleAlarmHomeScreenState extends State<ExampleAlarmHomeScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
+
+
 }

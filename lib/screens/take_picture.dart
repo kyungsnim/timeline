@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:alarm/alarm.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,10 +11,12 @@ import 'display_picture.dart';
 // 사용자가 주어진 카메라를 사용하여 사진을 찍을 수 있는 화면
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
+  final AlarmSettings alarmSettings;
 
   const TakePictureScreen({
     Key? key,
     required this.camera,
+    required this.alarmSettings,
   }) : super(key: key);
 
   @override
@@ -21,6 +24,7 @@ class TakePictureScreen extends StatefulWidget {
 }
 
 class TakePictureScreenState extends State<TakePictureScreen> {
+  bool _loading = false;
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
   String currentTime = '';
@@ -129,54 +133,79 @@ class TakePictureScreenState extends State<TakePictureScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // Future가 완료되면, 프리뷰를 보여줍니다.
-            return Stack(
-              alignment: Alignment.center,
-              children: [
-                AspectRatio(
-                    aspectRatio: 9 / 16, child: CameraPreview(_controller)),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(currentTime,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            shadows: [
-                              Shadow(
-                                  color: Colors.black87,
-                                  offset: Offset(1, 1),
-                                  blurRadius: 4)
-                            ],
+            return _loading
+                ? const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Loading...',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            fontSize: 70,
                             fontFamily: 'Pretendard',
-                            color: Colors.white)),
-                    const SizedBox(height: 40),
-                    Text(currentDate,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            shadows: [
-                              Shadow(
-                                  color: Colors.black87,
-                                  offset: Offset(1, 1),
-                                  blurRadius: 4)
-                            ],
-                            fontWeight: FontWeight.bold,
-                            fontSize: 40,
-                            fontFamily: 'Pretendard',
-                            color: Colors.white)),
-                    const SizedBox(height: 80),
-                  ],
-                )
-              ],
-            );
+                          ),
+                        ),
+                        SizedBox(height: 40),
+                        CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  )
+                : Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      AspectRatio(
+                          aspectRatio: 9 / 16,
+                          child: CameraPreview(_controller)),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(currentTime,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  shadows: [
+                                    Shadow(
+                                        color: Colors.black87,
+                                        offset: Offset(1, 1),
+                                        blurRadius: 4)
+                                  ],
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 70,
+                                  fontFamily: 'Pretendard',
+                                  color: Colors.white)),
+                          const SizedBox(height: 40),
+                          Text(currentDate,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  shadows: [
+                                    Shadow(
+                                        color: Colors.black87,
+                                        offset: Offset(1, 1),
+                                        blurRadius: 4)
+                                  ],
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 40,
+                                  fontFamily: 'Pretendard',
+                                  color: Colors.white)),
+                          const SizedBox(height: 80),
+                        ],
+                      )
+                    ],
+                  );
           } else {
             // 그렇지 않다면, 진행 표시기를 보여줍니다.
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: CircularProgressIndicator(
+              color: Colors.white,
+            ));
           }
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton.large(
+      floatingActionButton: _loading ? const SizedBox() : FloatingActionButton.large(
         child: Container(
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
@@ -198,23 +227,23 @@ class TakePictureScreenState extends State<TakePictureScreen> {
         ),
         // onPressed 콜백을 제공합니다.
         onPressed: () async {
-          // try / catch 블럭에서 사진을 촬영합니다. 만약 뭔가 잘못된다면 에러에
-          // 대응할 수 있습니다.
           try {
-            // 카메라 초기화가 완료됐는지 확인합니다.
-            await _initializeControllerFuture;
-
             // path 패키지를 사용하여 이미지가 저장될 경로를 지정합니다.
             var path = '';
 
+            setState(() {
+              _loading = true;
+            });
             // 사진 촬영을 시도하고 저장되는 경로를 로그로 남깁니다.
             _controller.takePicture().then((xFile) async {
               setState(() {
                 path = xFile.path;
+                _loading = false;
               });
 
               // 사진을 촬영하면, 새로운 화면으로 넘어갑니다.
-              await Get.to(() => DisplayCaptureScreen(imagePath: path));
+              await Get.to(() => DisplayCaptureScreen(
+                  imagePath: path, alarmSettings: widget.alarmSettings));
               getCurrentTime();
             });
           } catch (e) {

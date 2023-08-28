@@ -1,4 +1,5 @@
 import 'package:alarm/alarm.dart';
+import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:timeline/_importer.dart';
@@ -22,7 +23,8 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
   late bool volumeMax;
   late bool showNotification;
   late String assetAudio;
-  late TimeOfDay selectedTime;
+  // late TimeOfDay selectedTime;
+  late Time selectedTime;
 
   bool isToday() {
     final now = DateTime.now();
@@ -46,14 +48,15 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
 
     if (creating) {
       final dt = DateTime.now().add(const Duration(minutes: 1));
-      selectedTime = TimeOfDay(hour: dt.hour, minute: dt.minute);
+      // selectedTime = TimeOfDay(hour: dt.hour, minute: dt.minute);
+      selectedTime = Time(hour: dt.hour, minute: dt.minute);
       loopAudio = true;
       vibrate = true;
       volumeMax = true;
       showNotification = true;
       assetAudio = 'assets/marimba.mp3';
     } else {
-      selectedTime = TimeOfDay(
+      selectedTime = Time(
         hour: widget.alarmSettings!.dateTime.hour,
         minute: widget.alarmSettings!.dateTime.minute,
       );
@@ -69,11 +72,36 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
   }
 
   Future<void> pickTime() async {
-    final res = await showTimePicker(
-      initialTime: selectedTime,
-      context: context,
+    await Navigator.of(context).push(
+      showPicker(
+        context: context,
+        value: selectedTime,
+        sunrise: TimeOfDay(hour: 6, minute: 0),
+        // optional
+        sunset: TimeOfDay(hour: 18, minute: 0),
+        // optional
+        duskSpanInMinutes: 120,
+        // optional
+        onChange: (Time newTime) {
+          setState(() {
+            selectedTime = newTime;
+          });
+        },
+        accentColor: backgroundColor,
+        okText: '확인',
+        okStyle: const TextStyle(
+          fontSize: 20,
+          color: backgroundColor,
+          fontWeight: FontWeight.bold,
+        ),
+        cancelText: '취소',
+        cancelStyle: const TextStyle(
+          fontSize: 20,
+          color: backgroundColor,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
-    if (res != null) setState(() => selectedTime = res);
   }
 
   AlarmSettings buildAlarmSettings() {
@@ -100,9 +128,9 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
       dateTime: dateTime,
       loopAudio: loopAudio,
       vibrate: vibrate,
-      volumeMax: volumeMax,
-      notificationTitle: showNotification ? 'Alarm example' : null,
-      notificationBody: showNotification ? 'Your alarm ($id) is ringing' : null,
+      volumeMax: false, // volumeMax,
+      notificationTitle: showNotification ? '알람' : null,
+      notificationBody: showNotification ? '일어나세요!' : null,
       assetAudioPath: assetAudio,
       stopOnNotificationOpen: false,
     );

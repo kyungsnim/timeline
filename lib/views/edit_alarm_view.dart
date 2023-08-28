@@ -125,55 +125,60 @@ class EditAlarmView extends StatelessWidget {
               ),
               const SizedBox(height: 60),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context, false),
-                    child: Container(
-                      width: 150,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.grey,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 38, vertical: 14),
-                      child: const Text(
-                        '취소',
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Pretendard',
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context, false),
+                      child: Container(
+                        width: 140,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 14),
+                        child: const Text(
+                          '취소',
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Pretendard',
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => saveAlarm(),
-                    child: Container(
-                      width: 150,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: gradientButtonColor,
-                          boxShadow: [
-                            BoxShadow(
-                              offset: Offset(0, 0),
-                              blurRadius: 29,
-                              spreadRadius: 3,
-                              color: Colors.white.withOpacity(0.5),
-                            ),
-                          ]),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 38, vertical: 14),
-                      child: Text(
-                        mode == 'edit' ? '알람 수정' : '알람 설정',
-                        style: const TextStyle(
-                          color: textColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Pretendard',
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => saveAlarm(),
+                      child: Container(
+                        width: 140,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            gradient: gradientButtonColor,
+                            boxShadow: [
+                              BoxShadow(
+                                offset: Offset(0, 0),
+                                blurRadius: 29,
+                                spreadRadius: 3,
+                                color: Colors.white.withOpacity(0.5),
+                              ),
+                            ]),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 14),
+                        child: Text(
+                          mode == 'edit' ? '알람 수정' : '알람 설정',
+                          style: const TextStyle(
+                            color: textColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Pretendard',
+                          ),
                         ),
                       ),
                     ),

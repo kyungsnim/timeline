@@ -129,7 +129,7 @@ class _ExampleAlarmHomeScreenState extends State<ExampleAlarmHomeScreen> {
             ),
             FloatingActionButton(
               onPressed: () {
-                Get.to(() => TakePictureScreen(camera: firstCamera));
+                // Get.to(() => TakePictureScreen(camera: firstCamera));
               },
               backgroundColor: Colors.green,
               heroTag: null,

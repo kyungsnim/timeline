@@ -40,7 +40,7 @@ class RingAlarmView extends StatelessWidget {
               GestureDetector(
                 onTap: () => Alarm.stop(alarmSettings.id).then(
                   (_) => Get.off(
-                    () => TakePictureScreen(camera: firstCamera),
+                    () => TakePictureScreen(camera: firstCamera, alarmSettings: alarmSettings),
                   ),
                 ),
                 child: Container(

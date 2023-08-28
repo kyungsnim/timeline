@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:alarm/alarm.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 
@@ -13,9 +14,13 @@ import 'package:timeline/_importer.dart';
 
 class DisplayCaptureScreen extends StatefulWidget {
   final String imagePath;
+  final AlarmSettings alarmSettings;
 
-  const DisplayCaptureScreen({Key? key, required this.imagePath})
-      : super(key: key);
+  const DisplayCaptureScreen({
+    Key? key,
+    required this.imagePath,
+    required this.alarmSettings,
+  }) : super(key: key);
 
   @override
   _DisplayCaptureScreenState createState() => _DisplayCaptureScreenState();
@@ -23,12 +28,11 @@ class DisplayCaptureScreen extends StatefulWidget {
 
 class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
   GlobalKey _globalKey = GlobalKey();
-  final ScreenshotController _screenshotController = ScreenshotController(
-
-  );
+  final ScreenshotController _screenshotController = ScreenshotController();
   late Uint8List _imageFile;
   String currentTime = '';
   String currentDate = '';
+  File? shareImagePath;
 
   @override
   void initState() {
@@ -101,11 +105,12 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
       if (image != null) {
         final directory = await getApplicationDocumentsDirectory();
         // final directory = Directory('/storage/emulated/0/DCIM');
-        final imagePath = await File('${directory.path}/image.png').create();
-        await imagePath.writeAsBytes(image);
+        shareImagePath = await File('${directory.path}/image.png').create();
+        await shareImagePath!.writeAsBytes(image);
 
         /// Share Plugin
-        // await Share.shareFiles([imagePath.path]);
+        // await Share.shareFiles([shareImagePath.path]);
+        setState(() {});
       }
     });
   }
@@ -181,42 +186,46 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                 const SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                        onTap: () async =>
-                            await Share.shareFiles([widget.imagePath]),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 24),
-                          child: const Text(
-                            '공유',
-                            style: TextStyle(
-                              color: textColor,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                  child: shareImagePath != null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () async => await Share.shareFiles(
+                                  [shareImagePath!.path]),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 24),
+                                child: const Text(
+                                  '공유',
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => _saveLocalImage(),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 24),
-                          child: const Text(
-                            '저장',
-                            style: TextStyle(
-                              color: textColor,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                            InkWell(
+                              onTap: () => _saveLocalImage(),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 24),
+                                child: const Text(
+                                  '저장',
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
+                        )
+                      : const CircularProgressIndicator(
+                          color: Colors.white,
                         ),
-                      ),
-                    ],
-                  ),
                 ),
               ],
             )
@@ -225,17 +234,9 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
   }
 
   _saveLocalImage() async {
-    RenderRepaintBoundary boundary =
-        _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    ui.Image image = await boundary.toImage();
-    ByteData? byteData =
-        await (image.toByteData(format: ui.ImageByteFormat.png));
-    if (byteData != null) {
-      final result =
-          await ImageGallerySaver.saveImage(byteData.buffer.asUint8List(),
-          quality: 100);
-      Fluttertoast.showToast(msg: '저장 완료');
-      print(result);
-    }
+    final result = await ImageGallerySaver.saveImage(
+        shareImagePath!.readAsBytesSync(), // byteData.buffer.asUint8List(),
+        quality: 100);
+    Fluttertoast.showToast(msg: '저장 완료', gravity: ToastGravity.CENTER);
   }
 }

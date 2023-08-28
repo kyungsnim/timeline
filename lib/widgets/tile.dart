@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timeline/_importer.dart';
 
 class ExampleAlarmTile extends StatelessWidget {
   final String title;
@@ -33,19 +34,22 @@ class ExampleAlarmTile extends StatelessWidget {
       child: RawMaterialButton(
         onPressed: onPressed,
         child: Container(
+          alignment: Alignment.center,
           height: 100,
           padding: const EdgeInsets.all(35),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 28,
+                  fontSize: 32,
                   fontWeight: FontWeight.w500,
+                  fontFamily: 'Pretendard',
+                  color: textColor,
                 ),
               ),
-              const Icon(Icons.keyboard_arrow_right_rounded, size: 35),
+              // const Icon(Icons.keyboard_arrow_right_rounded, size: 35),
             ],
           ),
         ),

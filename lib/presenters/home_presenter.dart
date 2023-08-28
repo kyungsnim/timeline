@@ -73,8 +73,8 @@ class _HomePresenterState extends State<HomePresenter> {
         ),
         builder: (context) {
           return FractionallySizedBox(
-            heightFactor: 0.7,
-            child: EditAlarmPresenter(alarmSettings: settings),
+            heightFactor: 0.8,
+            child: EditAlarmPresenter(alarmSettings: settings, mode: 'edit'),
           );
         });
 
@@ -82,7 +82,7 @@ class _HomePresenterState extends State<HomePresenter> {
   }
 
   Future<void> onTapSetAlarm() async {
-    final res = await Get.to(() => const EditAlarmPresenter(alarmSettings: null));
+    final res = await Get.to(() => EditAlarmPresenter(alarmSettings: null));
     if (res != null && res == true) loadAlarms();
   }
 }

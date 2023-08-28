@@ -17,7 +17,9 @@ dependencies:
   camera: ^0.10.5+3
   image_picker: ^1.0.2
   screenshot: ^2.1.0
-
+  share_plus: ^7.1.0
+  image_gallery_saver: ^2.0.3
+  fluttertoast: ^8.2.2
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
@@ -36,3 +38,17 @@ flutter:
     - assets/one_piece.mp3
     - assets/star_wars.mp3
     - assets/marimba.mp3
+
+  fonts:
+    - family: PretendardBold
+      fonts:
+        - asset: assets/fonts/Pretendard-Bold.ttf
+    - family: PretendardLight
+      fonts:
+        - asset: assets/fonts/Pretendard-Light.ttf
+    - family: PretendardMedium
+      fonts:
+        - asset: assets/fonts/Pretendard-Medium.ttf
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/Pretendard-Regular.ttf

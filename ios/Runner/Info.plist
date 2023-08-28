@@ -44,6 +44,8 @@
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>aaa</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+    <string>aaa</string>
 	<key>NSCameraUsageDescription</key>
     <string>bbb</string>
     <key>NSMicrophoneUsageDescription</key>

@@ -5,8 +5,9 @@ import 'package:timeline/_importer.dart';
 
 class EditAlarmPresenter extends StatefulWidget {
   final AlarmSettings? alarmSettings;
+  String? mode;
 
-  const EditAlarmPresenter({required this.alarmSettings, super.key});
+  EditAlarmPresenter({required this.alarmSettings, this.mode, super.key});
 
   @override
   State<EditAlarmPresenter> createState() => _EditAlarmPresenterState();
@@ -125,6 +126,7 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
   @override
   Widget build(BuildContext context) {
     return EditAlarmView(
+      mode: widget.mode,
       creating: creating,
       loopAudio: loopAudio,
       vibrate: vibrate,

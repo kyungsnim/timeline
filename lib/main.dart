@@ -10,5 +10,7 @@ void main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await Alarm.init(showDebugLogs: true);
-  runApp(const GetMaterialApp(home: HomePresenter()));
+  runApp(const GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomePresenter()));
 }

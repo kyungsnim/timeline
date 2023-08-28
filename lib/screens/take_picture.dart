@@ -1,12 +1,9 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:screenshot/screenshot.dart';
+import 'package:timeline/_importer.dart';
 
 import 'display_picture.dart';
 
@@ -46,14 +43,20 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 
   getCurrentTime() {
     String currentYear = '${DateTime.now().year}';
-    String currentMonth = DateTime.now().month < 10 ? '0${DateTime.now().month}' : '${DateTime.now().month}';
-    String currentDay = DateTime.now().day < 10 ? '0${DateTime.now().day}' : '${DateTime.now().day}';
+    String currentMonth = DateTime.now().month < 10
+        ? '0${DateTime.now().month}'
+        : '${DateTime.now().month}';
+    String currentDay = DateTime.now().day < 10
+        ? '0${DateTime.now().day}'
+        : '${DateTime.now().day}';
     String currentHour = '';
-    String currentMinute = DateTime.now().minute < 10 ? '0${DateTime.now().minute}' : '${DateTime.now().minute}';
+    String currentMinute = DateTime.now().minute < 10
+        ? '0${DateTime.now().minute}'
+        : '${DateTime.now().minute}';
     String currentWeekDay = '월';
     String currentTimeText = '오전';
 
-    switch(DateTime.now().weekday) {
+    switch (DateTime.now().weekday) {
       case 0:
         currentWeekDay = '일';
         break;
@@ -90,7 +93,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     }
     setState(() {
       currentTime = '$currentTimeText $currentHour:$currentMinute';
-      currentDate = '$currentYear년 $currentMonth월 $currentDay일 ($currentWeekDay)';
+      currentDate =
+          '$currentYear년\n$currentMonth월 $currentDay일 ($currentWeekDay)';
     });
   }
 
@@ -104,7 +108,20 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Take a picture')),
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        title: const Text(
+          '인증샷 찍기',
+          style: TextStyle(
+            color: textColor,
+            fontFamily: 'Pretendard',
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        backgroundColor: backgroundColor,
+        elevation: 0,
+      ),
       // 카메라 프리뷰를 보여주기 전에 컨트롤러 초기화를 기다려야 합니다. 컨트롤러 초기화가
       // 완료될 때까지 FutureBuilder를 사용하여 로딩 스피너를 보여주세요.
       body: FutureBuilder<void>(
@@ -116,13 +133,11 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               alignment: Alignment.center,
               children: [
                 AspectRatio(
-                    aspectRatio: 9/16,
-                    child: CameraPreview(_controller)),
+                    aspectRatio: 9 / 16, child: CameraPreview(_controller)),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                        currentTime,
+                    Text(currentTime,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                             shadows: [
@@ -132,10 +147,11 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                   blurRadius: 4)
                             ],
                             fontWeight: FontWeight.bold,
-                            fontSize: 50,
+                            fontSize: 70,
+                            fontFamily: 'Pretendard',
                             color: Colors.white)),
-                    Text(
-                        currentDate,
+                    const SizedBox(height: 40),
+                    Text(currentDate,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                             shadows: [
@@ -145,8 +161,10 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                   blurRadius: 4)
                             ],
                             fontWeight: FontWeight.bold,
-                            fontSize: 25,
+                            fontSize: 40,
+                            fontFamily: 'Pretendard',
                             color: Colors.white)),
+                    const SizedBox(height: 80),
                   ],
                 )
               ],
@@ -157,8 +175,27 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.camera_alt),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.large(
+        child: Container(
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50),
+            color: Colors.white,
+          ),
+          child: Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: backgroundColor.withOpacity(0.7),
+                width: 4,
+              ),
+              borderRadius: BorderRadius.circular(50),
+            ),
+          ),
+        ),
         // onPressed 콜백을 제공합니다.
         onPressed: () async {
           // try / catch 블럭에서 사진을 촬영합니다. 만약 뭔가 잘못된다면 에러에
@@ -170,13 +207,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             // path 패키지를 사용하여 이미지가 저장될 경로를 지정합니다.
             var path = '';
 
-            // join(
-            // // 본 예제에서는 임시 디렉토리에 이미지를 저장합니다. `path_provider`
-            // // 플러그인을 사용하여 임시 디렉토리를 찾으세요.
-            // (await getTemporaryDirectory()).path,
-            // '${DateTime.now()}.png',
-            // )
-
             // 사진 촬영을 시도하고 저장되는 경로를 로그로 남깁니다.
             _controller.takePicture().then((xFile) async {
               setState(() {
@@ -184,7 +214,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               });
 
               // 사진을 촬영하면, 새로운 화면으로 넘어갑니다.
-              Get.to(() => DisplayCaptureScreen(imagePath: path));
+              await Get.to(() => DisplayCaptureScreen(imagePath: path));
+              getCurrentTime();
             });
           } catch (e) {
             // 만약 에러가 발생하면, 콘솔에 에러 로그를 남깁니다.

@@ -87,18 +87,21 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
             selectedTime = newTime;
           });
         },
+
         accentColor: backgroundColor,
         okText: '확인',
         okStyle: const TextStyle(
           fontSize: 20,
           color: backgroundColor,
           fontWeight: FontWeight.bold,
+          fontFamily: 'Pretendard',
         ),
         cancelText: '취소',
         cancelStyle: const TextStyle(
           fontSize: 20,
           color: backgroundColor,
           fontWeight: FontWeight.bold,
+          fontFamily: 'Pretendard',
         ),
       ),
     );

@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:alarm/alarm.dart';
-import 'package:flutter/rendering.dart';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -52,48 +50,47 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
     String currentMinute = DateTime.now().minute < 10
         ? '0${DateTime.now().minute}'
         : '${DateTime.now().minute}';
-    String currentWeekDay = '월';
-    String currentTimeText = '오전';
+    String currentWeekDay = 'MON';
+    String currentTimeText = 'AM';
 
     switch (DateTime.now().weekday) {
       case 0:
-        currentWeekDay = '일';
+        currentWeekDay = 'SUN';
         break;
       case 1:
-        currentWeekDay = '월';
+        currentWeekDay = 'MON';
         break;
       case 2:
-        currentWeekDay = '화';
+        currentWeekDay = 'TUE';
         break;
       case 3:
-        currentWeekDay = '수';
+        currentWeekDay = 'WED';
         break;
       case 4:
-        currentWeekDay = '목';
+        currentWeekDay = 'THU';
         break;
       case 5:
-        currentWeekDay = '금';
+        currentWeekDay = 'FRI';
         break;
       case 6:
-        currentWeekDay = '토';
+        currentWeekDay = 'SAT';
         break;
     }
 
     if (DateTime.now().hour <= 12) {
-      currentTimeText = '오전';
+      currentTimeText = 'AM';
 
       if (DateTime.now().hour == 12) {
-        currentTimeText = '오후';
+        currentTimeText = 'PM';
       }
       currentHour = '${DateTime.now().hour}';
     } else {
-      currentTimeText = '오후';
+      currentTimeText = 'PM';
       currentHour = '${DateTime.now().hour - 12}';
     }
     setState(() {
-      currentTime = '$currentTimeText $currentHour:$currentMinute';
-      currentDate =
-          '$currentYear년\n$currentMonth월 $currentDay일 ($currentWeekDay)';
+      currentTime = '$currentHour:$currentMinute $currentTimeText';
+      currentDate = '$currentYear/$currentMonth/$currentDay $currentWeekDay';
     });
   }
 
@@ -118,36 +115,23 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: AppBar(
-        title: const Text(
-          '인증샷',
-          style: TextStyle(
-            color: textColor,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        backgroundColor: backgroundColor,
-        elevation: 0,
-      ),
+      // backgroundColor: backgroundColor,
       body: widget.imagePath != ''
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                RepaintBoundary(
-                  key: _globalKey,
-                  child: Screenshot(
+          ? RepaintBoundary(
+              key: _globalKey,
+              child: Stack(
+                children: [
+                  Screenshot(
                     controller: _screenshotController,
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         Image.file(
                           File(widget.imagePath),
+                          fit: BoxFit.fill,
                         ),
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(currentTime,
                                 textAlign: TextAlign.center,
@@ -159,10 +143,9 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                                           blurRadius: 4)
                                     ],
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 70,
-                                    fontFamily: 'Pretendard',
+                                    fontSize: 64,
+                                    fontFamily: 'Nats',
                                     color: Colors.white)),
-                            const SizedBox(height: 40),
                             Text(currentDate,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
@@ -173,61 +156,89 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                                           blurRadius: 4)
                                     ],
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 40,
+                                    fontSize: 24,
                                     fontFamily: 'Pretendard',
                                     color: Colors.white)),
-                            const SizedBox(height: 80),
+                            const SizedBox(height: 160),
                           ],
                         )
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 30),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  child: shareImagePath != null
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkWell(
-                              onTap: () async => await Share.shareFiles(
-                                  [shareImagePath!.path]),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12, horizontal: 24),
-                                child: const Text(
-                                  '공유',
-                                  style: TextStyle(
-                                    color: textColor,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        child: shareImagePath != null
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    onTap: () async => await Share.shareFiles(
+                                        [shareImagePath!.path]),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: mainButtonColor,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 38),
+                                      child: const Row(
+                                        children: [
+                                          Icon(
+                                            Icons.share,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
+                                          SizedBox(width: 5),
+                                          Text(
+                                            '공유',
+                                            style: TextStyle(
+                                              color: whiteColor,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () => _saveLocalImage(),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12, horizontal: 24),
-                                child: const Text(
-                                  '저장',
-                                  style: TextStyle(
-                                    color: textColor,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                                  const SizedBox(width: 12),
+                                  InkWell(
+                                    onTap: () => _saveLocalImage(),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: whiteColor,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 55),
+                                      child: const Text(
+                                        '저장',
+                                        style: TextStyle(
+                                          color: textColor,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                   ),
+                                ],
+                              )
+                            : const Center(
+                              child: CircularProgressIndicator(
+                                  color: Colors.white,
                                 ),
-                              ),
                             ),
-                          ],
-                        )
-                      : const CircularProgressIndicator(
-                          color: Colors.white,
-                        ),
-                ),
-              ],
+                      ),
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ],
+              ),
             )
           : const Center(child: CircularProgressIndicator()),
     );

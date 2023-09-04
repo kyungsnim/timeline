@@ -38,7 +38,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       // 이용 가능한 카메라 목록에서 특정 카메라를 가져옵니다.
       widget.camera,
       // 적용할 해상도를 지정합니다.
-      ResolutionPreset.medium,
+      ResolutionPreset.max,
     );
     getCurrentTime();
     // 다음으로 controller를 초기화합니다. 초기화 메서드는 Future를 반환합니다.
@@ -57,48 +57,48 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     String currentMinute = DateTime.now().minute < 10
         ? '0${DateTime.now().minute}'
         : '${DateTime.now().minute}';
-    String currentWeekDay = '월';
-    String currentTimeText = '오전';
+    String currentWeekDay = 'MON';
+    String currentTimeText = 'AM';
 
     switch (DateTime.now().weekday) {
       case 0:
-        currentWeekDay = '일';
+        currentWeekDay = 'SUN';
         break;
       case 1:
-        currentWeekDay = '월';
+        currentWeekDay = 'MON';
         break;
       case 2:
-        currentWeekDay = '화';
+        currentWeekDay = 'TUE';
         break;
       case 3:
-        currentWeekDay = '수';
+        currentWeekDay = 'WED';
         break;
       case 4:
-        currentWeekDay = '목';
+        currentWeekDay = 'THU';
         break;
       case 5:
-        currentWeekDay = '금';
+        currentWeekDay = 'FRI';
         break;
       case 6:
-        currentWeekDay = '토';
+        currentWeekDay = 'SAT';
         break;
     }
 
     if (DateTime.now().hour <= 12) {
-      currentTimeText = '오전';
+      currentTimeText = 'AM';
 
       if (DateTime.now().hour == 12) {
-        currentTimeText = '오후';
+        currentTimeText = 'PM';
       }
       currentHour = '${DateTime.now().hour}';
     } else {
-      currentTimeText = '오후';
+      currentTimeText = 'PM';
       currentHour = '${DateTime.now().hour - 12}';
     }
     setState(() {
-      currentTime = '$currentTimeText $currentHour:$currentMinute';
+      currentTime = '$currentHour:$currentMinute $currentTimeText';
       currentDate =
-          '$currentYear년\n$currentMonth월 $currentDay일 ($currentWeekDay)';
+          '$currentYear/$currentMonth/$currentDay $currentWeekDay';
     });
   }
 
@@ -112,56 +112,46 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: AppBar(
-        title: const Text(
-          '인증샷 찍기',
-          style: TextStyle(
-            color: textColor,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        backgroundColor: backgroundColor,
-        elevation: 0,
-      ),
-      // 카메라 프리뷰를 보여주기 전에 컨트롤러 초기화를 기다려야 합니다. 컨트롤러 초기화가
-      // 완료될 때까지 FutureBuilder를 사용하여 로딩 스피너를 보여주세요.
+      // backgroundColor: backgroundColor,
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // Future가 완료되면, 프리뷰를 보여줍니다.
             return _loading
-                ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Loading...',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Pretendard',
-                          ),
+                ? Column(
+                  children: [
+                    Image.asset('assets/images/img_background.png'),
+                    const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Loading...',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Nats',
+                              ),
+                            ),
+                            SizedBox(height: 40),
+                            CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 40),
-                        CircularProgressIndicator(
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  )
+                      ),
+                  ],
+                )
                 : Stack(
                     alignment: Alignment.center,
                     children: [
                       AspectRatio(
-                          aspectRatio: 9 / 16,
+                          aspectRatio: 7.5 / 16,
                           child: CameraPreview(_controller)),
                       Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(currentTime,
                               textAlign: TextAlign.center,
@@ -173,10 +163,9 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                         blurRadius: 4)
                                   ],
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 70,
-                                  fontFamily: 'Pretendard',
+                                  fontSize: 64,
+                                  fontFamily: 'Nats',
                                   color: Colors.white)),
-                          const SizedBox(height: 40),
                           Text(currentDate,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
@@ -187,9 +176,58 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                         blurRadius: 4)
                                   ],
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 40,
+                                  fontSize: 24,
                                   fontFamily: 'Pretendard',
                                   color: Colors.white)),
+                          const SizedBox(height: 30),
+                          GestureDetector(
+                            // onPressed 콜백을 제공합니다.
+                            onTap: () async {
+                              try {
+                                // path 패키지를 사용하여 이미지가 저장될 경로를 지정합니다.
+                                var path = '';
+
+                                setState(() {
+                                  _loading = true;
+                                });
+                                // 사진 촬영을 시도하고 저장되는 경로를 로그로 남깁니다.
+                                _controller.takePicture().then((xFile) async {
+                                  setState(() {
+                                    path = xFile.path;
+                                    _loading = false;
+                                  });
+
+                                  // 사진을 촬영하면, 새로운 화면으로 넘어갑니다.
+                                  await Get.to(() => DisplayCaptureScreen(
+                                      imagePath: path,
+                                      alarmSettings: widget.alarmSettings));
+                                  getCurrentTime();
+                                });
+                              } catch (e) {
+                                // 만약 에러가 발생하면, 콘솔에 에러 로그를 남깁니다.
+                                print(e);
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: Colors.white,
+                              ),
+                              child: Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: backgroundColor.withOpacity(0.7),
+                                    width: 4,
+                                  ),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 80),
                         ],
                       )
@@ -201,54 +239,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                 child: CircularProgressIndicator(
               color: Colors.white,
             ));
-          }
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _loading ? const SizedBox() : FloatingActionButton.large(
-        child: Container(
-          padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            color: Colors.white,
-          ),
-          child: Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                color: backgroundColor.withOpacity(0.7),
-                width: 4,
-              ),
-              borderRadius: BorderRadius.circular(50),
-            ),
-          ),
-        ),
-        // onPressed 콜백을 제공합니다.
-        onPressed: () async {
-          try {
-            // path 패키지를 사용하여 이미지가 저장될 경로를 지정합니다.
-            var path = '';
-
-            setState(() {
-              _loading = true;
-            });
-            // 사진 촬영을 시도하고 저장되는 경로를 로그로 남깁니다.
-            _controller.takePicture().then((xFile) async {
-              setState(() {
-                path = xFile.path;
-                _loading = false;
-              });
-
-              // 사진을 촬영하면, 새로운 화면으로 넘어갑니다.
-              await Get.to(() => DisplayCaptureScreen(
-                  imagePath: path, alarmSettings: widget.alarmSettings));
-              getCurrentTime();
-            });
-          } catch (e) {
-            // 만약 에러가 발생하면, 콘솔에 에러 로그를 남깁니다.
-            print(e);
           }
         },
       ),

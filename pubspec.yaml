@@ -34,6 +34,8 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/images/
+    - assets/fonts/
     - assets/mozart.mp3
     - assets/nokia.mp3
     - assets/one_piece.mp3
@@ -53,3 +55,6 @@ flutter:
     - family: Pretendard
       fonts:
         - asset: assets/fonts/Pretendard-Regular.ttf
+    - family: Nats
+      fonts:
+        - asset: assets/fonts/NATS-Regular.ttf

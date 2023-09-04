@@ -47,161 +47,187 @@ class EditAlarmView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: mode == 'edit' ? backgroundColor.withOpacity(0.85) : backgroundColor,
-        body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                mode == 'edit' ? '알람 수정' : '알람 맞추기',
-                style: const TextStyle(
-                  color: textColor,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Pretendard',
-                ),
-              ),
-              const SizedBox(height: 50),
-              Text(
-                isToday() ? '오늘' : '내일',
-                style: const TextStyle(
-                  color: textColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Pretendard',
-                ),
-              ),
-              const SizedBox(height: 20),
-              RawMaterialButton(
-                onPressed: () => pickTime(),
-                fillColor: Colors.grey[200],
-                child: Container(
-                  margin: const EdgeInsets.all(20),
-                  child: Text(
-                    selectedTime.format(context),
-                    style: const TextStyle(
-                      color: backgroundColor,
-                      fontFamily: 'Pretendard',
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 60),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    '사운드',
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Pretendard',
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
-                    decoration:
-                        BoxDecoration(border: Border.all(color: Colors.white)),
-                    child: DropdownButton(
-                      value: assetAudio,
-                      underline: SizedBox(),
-                      items: [
-                        _buildDropdownItem('assets/marimba.mp3', 'Marimba'),
-                        _buildDropdownItem('assets/nokia.mp3', 'Nokia'),
-                        _buildDropdownItem('assets/mozart.mp3', 'Mozart'),
-                        _buildDropdownItem('assets/star_wars.mp3', 'Star Wars'),
-                        _buildDropdownItem('assets/one_piece.mp3', 'One Piece'),
-                      ],
-                      onChanged: (value) => onChangeAudio(value!),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 60),
-              Row(
+    return Scaffold(
+      backgroundColor:
+          mode == 'edit' ? backgroundColor.withOpacity(0.85) : backgroundColor,
+      body: Stack(
+        children: [
+          Image.asset('assets/images/img_background.png'),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context, false),
-                      child: Container(
-                        width: 140,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 14),
-                        child: const Text(
-                          '취소',
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Pretendard',
-                          ),
+                  const SizedBox(height: 50),
+                  const Text(
+                    'MIRACLE MORNING ALARM',
+                    style: TextStyle(
+                      color: whiteColor,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Nats',
+                    ),
+                  ),
+                  const Spacer(),
+                  const SizedBox(height: 100),
+                  Text(
+                    isToday() ? '오늘' : '내일',
+                    style: TextStyle(
+                        color: whiteColor,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: 'Pretendard',
+                        shadows: [
+                          Shadow(
+                            offset: const Offset(0, 0),
+                            blurRadius: 13,
+                            color: Colors.black.withOpacity(0.14),
+                          )
+                        ]),
+                  ),
+                  RawMaterialButton(
+                    onPressed: () => pickTime(),
+                    child: Container(
+                      child: Text(
+                        selectedTime.format(context),
+                        style: TextStyle(
+                          color: whiteColor,
+                          fontFamily: 'Nats',
+                          fontSize: 64,
+                          fontWeight: FontWeight.w400,
+                          shadows: [
+                            Shadow(
+                              offset: const Offset(0, 0),
+                              blurRadius: 13,
+                              color: Colors.black.withOpacity(0.14),
+                            )
+                          ],
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => saveAlarm(),
-                      child: Container(
-                        width: 140,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: gradientButtonColor,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 0),
-                                blurRadius: 29,
-                                spreadRadius: 3,
-                                color: Colors.white.withOpacity(0.5),
-                              ),
-                            ]),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 14),
-                        child: Text(
-                          mode == 'edit' ? '알람 수정' : '알람 설정',
-                          style: const TextStyle(
-                            color: textColor,
+                  const SizedBox(height: 50),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(
+                        color: Colors.white,
+                      ),
+                      color: Colors.white.withOpacity(0.2)
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/ic_music.png',
+                            width: 24, height: 24),
+                        const SizedBox(width: 10),
+                        const Text(
+                          'SOUND',
+                          style: TextStyle(
+                            color: whiteColor,
                             fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                             fontFamily: 'Pretendard',
                           ),
                         ),
+                        const SizedBox(width: 20),
+                        DropdownButton(
+                          icon: Icon(Icons.arrow_drop_down, color: Colors.white,),
+                          style: const TextStyle(
+                            color: whiteColor,
+                          ),
+                          value: assetAudio,
+                          underline: SizedBox(),
+                          items: [
+                            _buildDropdownItem('assets/marimba.mp3', 'Marimba'),
+                            _buildDropdownItem('assets/nokia.mp3', 'Nokia'),
+                            _buildDropdownItem('assets/mozart.mp3', 'Mozart'),
+                            _buildDropdownItem(
+                                'assets/star_wars.mp3', 'Star Wars'),
+                            _buildDropdownItem(
+                                'assets/one_piece.mp3', 'One Piece'),
+                          ],
+                          onChanged: (value) => onChangeAudio(value!),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => Navigator.pop(context, false),
+                          child: Container(
+                            // width: 140,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              color: mainButtonColor,
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 55, vertical: 12),
+                            child: const Text(
+                              '취소',
+                              style: TextStyle(
+                                color: whiteColor,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Pretendard',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => saveAlarm(),
+                          child: Container(
+                            // width: 140,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                            color: whiteColor
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 55, vertical: 12),
+                            child: Text(
+                              mode == 'edit' ? '수정' : '완료',
+                              style: const TextStyle(
+                                color: textColor,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Pretendard',
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  if (!creating)
+                    TextButton(
+                      onPressed: () => deleteAlarm(),
+                      child: const Text(
+                        '알람 삭제',
+                        style: TextStyle(
+                          color: Colors.redAccent,
+                          fontSize: 20,
+                          fontFamily: 'Pretendard',
+                        ),
                       ),
                     ),
-                  )
+                  const SizedBox(height: 120),
                 ],
               ),
-              const SizedBox(height: 30),
-              if (!creating)
-                TextButton(
-                  onPressed: () => deleteAlarm(),
-                  child: const Text(
-                    '알람 삭제',
-                    style: TextStyle(
-                      color: Colors.redAccent,
-                      fontSize: 20,
-                      fontFamily: 'Pretendard',
-                    ),
-                  ),
-                ),
-              const SizedBox(),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -212,7 +238,7 @@ class EditAlarmView extends StatelessWidget {
       child: Text(
         text,
         style: const TextStyle(
-          color: Colors.grey,
+          color: textColor,
           fontSize: 20,
           fontFamily: 'Pretendard',
         ),

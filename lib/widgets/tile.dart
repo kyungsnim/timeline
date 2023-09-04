@@ -35,18 +35,25 @@ class ExampleAlarmTile extends StatelessWidget {
         onPressed: onPressed,
         child: Container(
           alignment: Alignment.center,
-          height: 100,
+          // height: 100,
           padding: const EdgeInsets.all(35),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Pretendard',
-                  color: textColor,
+                style: TextStyle(
+                  fontSize: 64,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Nats',
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      offset: const Offset(0,0),
+                      blurRadius: 13,
+                      color: Colors.black.withOpacity(0.14),
+                    )
+                  ]
                 ),
               ),
               // const Icon(Icons.keyboard_arrow_right_rounded, size: 35),

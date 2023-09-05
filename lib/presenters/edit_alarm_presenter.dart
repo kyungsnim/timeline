@@ -23,8 +23,16 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
   late bool volumeMax;
   late bool showNotification;
   late String assetAudio;
+
   // late TimeOfDay selectedTime;
   late Time selectedTime;
+  List<String> assetAudioList = [
+    'marimba',
+    'mozart',
+    'nokia',
+    'one_piece',
+    'star_wars',
+  ];
 
   bool isToday() {
     final now = DateTime.now();
@@ -54,7 +62,7 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
       vibrate = true;
       volumeMax = true;
       showNotification = true;
-      assetAudio = 'assets/marimba.mp3';
+      assetAudio = 'marimba';
     } else {
       selectedTime = Time(
         hour: widget.alarmSettings!.dateTime.hour,
@@ -67,7 +75,9 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
           widget.alarmSettings!.notificationTitle!.isNotEmpty &&
           widget.alarmSettings!.notificationBody != null &&
           widget.alarmSettings!.notificationBody!.isNotEmpty;
-      assetAudio = widget.alarmSettings!.assetAudioPath;
+      assetAudio = widget.alarmSettings!.assetAudioPath
+          .replaceAll('assets/', '')
+          .replaceAll('.mp3', '');
     }
   }
 
@@ -131,10 +141,11 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
       dateTime: dateTime,
       loopAudio: loopAudio,
       vibrate: vibrate,
-      volumeMax: false, // volumeMax,
+      volumeMax: false,
+      // volumeMax,
       notificationTitle: showNotification ? '알람' : null,
       notificationBody: showNotification ? '일어나세요!' : null,
-      assetAudioPath: assetAudio,
+      assetAudioPath: 'assets/$assetAudio.mp3',
       stopOnNotificationOpen: false,
     );
     return alarmSettings;
@@ -180,7 +191,21 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
   }
 
   void onChangeAudio(value) {
-    setState(() => assetAudio = value!);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimplePopupDialog(
+            title: 'SOUND',
+            content: assetAudioList,
+            selectedAudio: assetAudio,
+            onChangeAudio: (asset) => _onChangeAudio(asset),
+          );
+        });
+  }
+
+  void _onChangeAudio(asset) {
+    setState(() => assetAudio = asset!);
+    Get.back();
   }
 
   void onChangeLoopAudio(value) {

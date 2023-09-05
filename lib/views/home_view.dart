@@ -22,7 +22,12 @@ class HomeView extends StatelessWidget {
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          Image.asset('assets/images/img_background.png'),
+          Image.asset(
+            'assets/images/img_background.png',
+            width: Get.width,
+            height: Get.height,
+            fit: BoxFit.fill,
+          ),
           SafeArea(
             child: Center(
               child: Column(

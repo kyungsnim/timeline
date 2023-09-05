@@ -43,6 +43,45 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     getCurrentTime();
     // 다음으로 controller를 초기화합니다. 초기화 메서드는 Future를 반환합니다.
     _initializeControllerFuture = _controller.initialize();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      saveAlarm();
+    });
+  }
+
+  AlarmSettings buildAlarmSettings() {
+    final now = DateTime.now();
+    final id = DateTime.now().millisecondsSinceEpoch % 100000;
+
+    DateTime dateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      widget.alarmSettings.dateTime.hour,
+      widget.alarmSettings.dateTime.minute,
+      0,
+      0,
+    );
+    if (dateTime.isBefore(DateTime.now())) {
+      dateTime = dateTime.add(const Duration(days: 1));
+    }
+
+    final alarmSettings = AlarmSettings(
+      id: id,
+      dateTime: dateTime,
+      loopAudio: true,
+      vibrate: true,
+      volumeMax: false,
+      // volumeMax,
+      notificationTitle: widget.alarmSettings.notificationTitle,
+      notificationBody: widget.alarmSettings.notificationBody,
+      assetAudioPath: widget.alarmSettings.assetAudioPath,
+      stopOnNotificationOpen: false,
+    );
+    return alarmSettings;
+  }
+
+  void saveAlarm() {
+    Alarm.set(alarmSettings: buildAlarmSettings());
   }
 
   getCurrentTime() {
@@ -97,8 +136,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     }
     setState(() {
       currentTime = '$currentHour:$currentMinute $currentTimeText';
-      currentDate =
-          '$currentYear/$currentMonth/$currentDay $currentWeekDay';
+      currentDate = '$currentYear/$currentMonth/$currentDay $currentWeekDay';
     });
   }
 
@@ -119,10 +157,15 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           if (snapshot.connectionState == ConnectionState.done) {
             // Future가 완료되면, 프리뷰를 보여줍니다.
             return _loading
-                ? Column(
-                  children: [
-                    Image.asset('assets/images/img_background.png'),
-                    const Center(
+                ? Stack(
+                    children: [
+                      Image.asset(
+                        'assets/images/img_background.png',
+                        width: Get.width,
+                        height: Get.height,
+                        fit: BoxFit.fitHeight,
+                      ),
+                      const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -135,15 +178,15 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                 fontFamily: 'Nats',
                               ),
                             ),
-                            SizedBox(height: 40),
+                            SizedBox(height: 20),
                             CircularProgressIndicator(
                               color: Colors.white,
                             ),
                           ],
                         ),
                       ),
-                  ],
-                )
+                    ],
+                  )
                 : Stack(
                     alignment: Alignment.center,
                     children: [

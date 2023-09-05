@@ -4,6 +4,7 @@ import 'package:alarm/alarm.dart';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -128,6 +129,8 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                       children: [
                         Image.file(
                           File(widget.imagePath),
+                          width: Get.width,
+                          height: Get.height,
                           fit: BoxFit.fill,
                         ),
                         Column(
@@ -177,8 +180,11 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                                     MainAxisAlignment.center,
                                 children: [
                                   InkWell(
-                                    onTap: () async => await Share.shareFiles(
-                                        [shareImagePath!.path]),
+                                    onTap: () async {
+                                      await Share.shareFiles(
+                                          [shareImagePath!.path]);
+                                      Get.off(() => const HomePresenter());
+                                    },
                                     child: Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(50),
@@ -249,5 +255,6 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
         shareImagePath!.readAsBytesSync(), // byteData.buffer.asUint8List(),
         quality: 100);
     Fluttertoast.showToast(msg: '저장 완료', gravity: ToastGravity.CENTER);
+    Get.off(() => const HomePresenter());
   }
 }

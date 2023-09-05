@@ -1,5 +1,6 @@
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:timeline/_importer.dart';
 
 class EditAlarmView extends StatelessWidget {
@@ -52,7 +53,12 @@ class EditAlarmView extends StatelessWidget {
           mode == 'edit' ? backgroundColor.withOpacity(0.85) : backgroundColor,
       body: Stack(
         children: [
-          Image.asset('assets/images/img_background.png'),
+          Image.asset(
+            'assets/images/img_background.png',
+            width: Get.width,
+            height: Get.height,
+            fit: BoxFit.fill,
+          ),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -108,50 +114,65 @@ class EditAlarmView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 50),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        color: Colors.white,
+                  GestureDetector(
+                    onTap: () => onChangeAudio('1'),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(
+                            color: Colors.white,
+                          ),
+                          color: Colors.white.withOpacity(0.2)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset('assets/images/ic_music.png',
+                              width: 24, height: 24),
+                          const SizedBox(width: 10),
+                          const Text(
+                            'SOUND',
+                            style: TextStyle(
+                              color: whiteColor,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Pretendard',
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Text(
+                            assetAudio,
+                            style: const TextStyle(
+                              color: whiteColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Pretendard',
+                            ),
+                          ),
+                          // DropdownButton(
+                          //   icon: Icon(
+                          //     Icons.arrow_drop_down,
+                          //     color: Colors.white,
+                          //   ),
+                          //   style: const TextStyle(
+                          //     color: whiteColor,
+                          //   ),
+                          //   value: assetAudio,
+                          //   underline: SizedBox(),
+                          //   items: [
+                          //     _buildDropdownItem('assets/marimba.mp3', 'Marimba'),
+                          //     _buildDropdownItem('assets/nokia.mp3', 'Nokia'),
+                          //     _buildDropdownItem('assets/mozart.mp3', 'Mozart'),
+                          //     _buildDropdownItem(
+                          //         'assets/star_wars.mp3', 'Star Wars'),
+                          //     _buildDropdownItem(
+                          //         'assets/one_piece.mp3', 'One Piece'),
+                          //   ],
+                          //   onChanged: (value) => onChangeAudio(value!),
+                          // ),
+                        ],
                       ),
-                      color: Colors.white.withOpacity(0.2)
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset('assets/images/ic_music.png',
-                            width: 24, height: 24),
-                        const SizedBox(width: 10),
-                        const Text(
-                          'SOUND',
-                          style: TextStyle(
-                            color: whiteColor,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Pretendard',
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        DropdownButton(
-                          icon: Icon(Icons.arrow_drop_down, color: Colors.white,),
-                          style: const TextStyle(
-                            color: whiteColor,
-                          ),
-                          value: assetAudio,
-                          underline: SizedBox(),
-                          items: [
-                            _buildDropdownItem('assets/marimba.mp3', 'Marimba'),
-                            _buildDropdownItem('assets/nokia.mp3', 'Nokia'),
-                            _buildDropdownItem('assets/mozart.mp3', 'Mozart'),
-                            _buildDropdownItem(
-                                'assets/star_wars.mp3', 'Star Wars'),
-                            _buildDropdownItem(
-                                'assets/one_piece.mp3', 'One Piece'),
-                          ],
-                          onChanged: (value) => onChangeAudio(value!),
-                        ),
-                      ],
                     ),
                   ),
                   Spacer(),
@@ -191,8 +212,7 @@ class EditAlarmView extends StatelessWidget {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
-                            color: whiteColor
-                            ),
+                                color: whiteColor),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 55, vertical: 12),
                             child: Text(

@@ -4,6 +4,7 @@ import 'package:alarm/alarm.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timeline/_importer.dart';
 
 var firstCamera;
@@ -45,11 +46,15 @@ class _HomePresenterState extends State<HomePresenter> {
   }
 
   Future<void> navigateToRingScreen(AlarmSettings alarmSettings) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final double volume = prefs.getDouble('volume')!;
+
     await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) =>
-              RingAlarmPresenter(alarmSettings: alarmSettings),
+              RingAlarmPresenter(alarmSettings: alarmSettings, volume: volume),
         ));
     loadAlarms();
   }

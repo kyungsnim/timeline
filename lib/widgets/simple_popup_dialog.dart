@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -6,12 +7,22 @@ class SimplePopupDialog extends StatelessWidget {
   final List<String> content;
   final String selectedAudio;
   final Function onChangeAudio;
+  final double volume;
+  final bool vibrate;
+  final Function onChangeVibrate;
+  final Function onChangeVolume;
 
-  const SimplePopupDialog(
-      {Key? key, required this.title, required this.content,
-        required this.selectedAudio,
-      required this.onChangeAudio,})
-      : super(key: key);
+  const SimplePopupDialog({
+    Key? key,
+    required this.title,
+    required this.content,
+    required this.selectedAudio,
+    required this.volume,
+    required this.vibrate,
+    required this.onChangeVolume,
+    required this.onChangeVibrate,
+    required this.onChangeAudio,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +54,7 @@ class SimplePopupDialog extends StatelessWidget {
                       blurRadius: 5,
                       color: Colors.white.withOpacity(0.5),
                     )
-                  ]
-              ),
+                  ]),
             ),
             const SizedBox(height: 30),
             Container(
@@ -55,7 +65,7 @@ class SimplePopupDialog extends StatelessWidget {
                 ),
                 color: const Color(0xB2FFFFFF),
               ),
-              width: 380,
+              width: 250,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -66,28 +76,28 @@ class SimplePopupDialog extends StatelessWidget {
                       GestureDetector(
                         onTap: () => Get.back(),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
-                          child: Icon(Icons.clear,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          child: Icon(
+                            Icons.clear,
                             color: Colors.black.withOpacity(0.5),
-                            size: 30,),
+                            size: 30,
+                          ),
                         ),
                       ),
                     ],
                   ),
                   // title
-                  Padding(
-                    padding: EdgeInsets.only(top: 6),
-                    child: Text(
-                      title ?? "",
-                      // style: MidTextStyles.title1Bold.apply(color: MidColors.baseFontBlack40),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Color(0xFF333333),
-                        fontSize: 20,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.20,
-                      ),
+                  Text(
+                    title ?? "",
+                    // style: MidTextStyles.title1Bold.apply(color: MidColors.baseFontBlack40),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Color(0xFF333333),
+                      fontSize: 20,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.20,
                     ),
                   ),
                   SizedBox(height: 20),
@@ -102,10 +112,11 @@ class SimplePopupDialog extends StatelessWidget {
                           child: Container(
                             alignment: Alignment.center,
                             padding: const EdgeInsets.symmetric(vertical: 14),
-                            color: selectedAudio == content[index] ? Colors.white.withOpacity(0.4)
-                            : Colors.white.withOpacity(0),
+                            color: selectedAudio == content[index]
+                                ? Colors.white.withOpacity(0.4)
+                                : Colors.white.withOpacity(0),
                             child: Text(
-                                content[index],
+                              content[index],
                               style: const TextStyle(
                                 color: Color(0xFF444444),
                                 fontSize: 18,
@@ -121,6 +132,44 @@ class SimplePopupDialog extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/volume_up.png',
+                  width: 20,
+                ),
+                SliderTheme(
+                  data: SliderThemeData(
+                    // thumbShape: SliderComponentShape.,
+                    overlayShape: SliderComponentShape.noOverlay,
+                  ),
+                  child: Slider(
+                    activeColor: Color(0xFF9391B7),
+                    inactiveColor: Colors.white,
+                    thumbColor: Colors.white,
+                    value: volume,
+                    min: 0,
+                    max: 1,
+                    onChanged: (value) => onChangeVolume(value),
+                  ),
+                ),
+                Image.asset(
+                  'assets/images/edgesensor_high.png',
+                  width: 20,
+                ),
+                Transform.scale(
+                  transformHitTests: false,
+                  scale: 0.8,
+                  child: CupertinoSwitch(
+                      activeColor: Color(0xFF9391B7),
+                      trackColor: Color(0xFFB7B7B7),
+                      value: vibrate,
+                      onChanged: (newValue) => onChangeVibrate(newValue)),
+                ),
+              ],
+            )
           ],
         ));
   }

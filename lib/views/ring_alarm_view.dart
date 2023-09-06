@@ -3,11 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:timeline/_importer.dart';
 import 'package:timeline/screens/take_picture.dart';
+import 'package:volume_controller/volume_controller.dart';
 
-class RingAlarmView extends StatelessWidget {
+class RingAlarmView extends StatefulWidget {
   final AlarmSettings alarmSettings;
+  final double volume;
 
-  const RingAlarmView({required this.alarmSettings, super.key});
+  const RingAlarmView(
+      {required this.alarmSettings, required this.volume, super.key});
+
+  @override
+  State<RingAlarmView> createState() => _RingAlarmViewState();
+}
+
+class _RingAlarmViewState extends State<RingAlarmView> {
+  late final VolumeController _volumeController = VolumeController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// 설정한 볼륨으로 높여주기
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _volumeController.setVolume(widget.volume);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +35,12 @@ class RingAlarmView extends StatelessWidget {
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          Image.asset('assets/images/img_background.png'),
+          Image.asset(
+            'assets/images/img_background.png',
+            width: Get.width,
+            height: Get.height,
+            fit: BoxFit.fill,
+          ),
           SafeArea(
             child: Center(
               child: Column(
@@ -53,29 +78,30 @@ class RingAlarmView extends StatelessWidget {
                         color: Colors.white,
                         shadows: [
                           Shadow(
-                            offset: const Offset(0,0),
+                            offset: const Offset(0, 0),
                             blurRadius: 13,
                             color: Colors.black.withOpacity(0.14),
                           )
-                        ]
-                    ),
+                        ]),
                   ),
                   const Spacer(),
                   GestureDetector(
-                    onTap: () => Alarm.stop(alarmSettings.id).then(
+                    onTap: () => Alarm.stop(widget.alarmSettings.id).then(
                       (_) => Get.off(
-                        () => TakePictureScreen(camera: firstCamera, alarmSettings: alarmSettings),
+                        () => TakePictureScreen(
+                            camera: firstCamera,
+                            alarmSettings: widget.alarmSettings),
                       ),
                     ),
                     child: FittedBox(
                       child: Container(
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: whiteColor,
+                          borderRadius: BorderRadius.circular(50),
+                          color: whiteColor,
                         ),
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 55, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 55, vertical: 12),
                         child: const Text('알람 끄고 사진 찍기',
                             style: TextStyle(
                               color: textColor,
@@ -97,13 +123,13 @@ class RingAlarmView extends StatelessWidget {
   }
 
   String convertDateTime() {
-    String hour = alarmSettings.dateTime.hour < 10
-        ? '0${alarmSettings.dateTime.hour}'
-        : alarmSettings.dateTime.hour.toString();
-    String minute = alarmSettings.dateTime.minute < 10
-        ? '0${alarmSettings.dateTime.minute}'
-        : alarmSettings.dateTime.minute.toString();
-    String morning = alarmSettings.dateTime.hour < 12 ? 'AM' : 'PM';
+    String hour = widget.alarmSettings.dateTime.hour < 10
+        ? '0${widget.alarmSettings.dateTime.hour}'
+        : widget.alarmSettings.dateTime.hour.toString();
+    String minute = widget.alarmSettings.dateTime.minute < 10
+        ? '0${widget.alarmSettings.dateTime.minute}'
+        : widget.alarmSettings.dateTime.minute.toString();
+    String morning = widget.alarmSettings.dateTime.hour < 12 ? 'AM' : 'PM';
 
     return '$hour:$minute $morning';
   }

@@ -183,7 +183,7 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                                     onTap: () async {
                                       await Share.shareFiles(
                                           [shareImagePath!.path]);
-                                      Get.off(() => const HomePresenter());
+                                      // Get.off(() => const HomePresenter());
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -240,7 +240,28 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                                 ),
                             ),
                       ),
-                      const SizedBox(height: 80),
+                      const SizedBox(height: 12),
+                      GestureDetector(
+                        onTap: () => Get.off(() => const HomePresenter()),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          child: Text('홈으로',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                              shadows: [
+                                Shadow(
+                                  offset: Offset(0,0),
+                                  blurRadius: 10,
+                                  color: Colors.black38
+                                )
+                              ]
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 52),
                     ],
                   ),
                 ],

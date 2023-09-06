@@ -163,14 +163,14 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                         'assets/images/img_background.png',
                         width: Get.width,
                         height: Get.height,
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit.fill,
                       ),
                       const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Loading...',
+                              'LOADING',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 36,
@@ -190,9 +190,11 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                 : Stack(
                     alignment: Alignment.center,
                     children: [
-                      AspectRatio(
-                          aspectRatio: 7.5 / 16,
-                          child: CameraPreview(_controller)),
+                      Center(
+                        child: AspectRatio(
+                            aspectRatio: Get.width / Get.height,
+                            child: CameraPreview(_controller)),
+                      ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [

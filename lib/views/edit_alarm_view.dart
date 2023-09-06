@@ -236,9 +236,16 @@ class EditAlarmView extends StatelessWidget {
                       child: const Text(
                         '알람 삭제',
                         style: TextStyle(
-                          color: Colors.redAccent,
+                          color: Colors.white,
                           fontSize: 20,
                           fontFamily: 'Pretendard',
+                          shadows: [
+                            Shadow(
+                              offset: Offset(0,0),
+                              blurRadius: 10,
+                              color: Colors.black38
+                            )
+                          ]
                         ),
                       ),
                     ),

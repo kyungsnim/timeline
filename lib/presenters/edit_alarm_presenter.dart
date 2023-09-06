@@ -2,6 +2,7 @@ import 'package:alarm/alarm.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timeline/_importer.dart';
 
 class EditAlarmPresenter extends StatefulWidget {
@@ -23,6 +24,7 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
   late bool volumeMax;
   late bool showNotification;
   late String assetAudio;
+  double volume = 0.5;
 
   // late TimeOfDay selectedTime;
   late Time selectedTime;
@@ -151,8 +153,13 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
     return alarmSettings;
   }
 
-  void saveAlarm() {
+  void saveAlarm() async {
     setState(() => loading = true);
+    final prefs = await SharedPreferences.getInstance();
+
+    /// alarm 패키지가 볼륨설정 지원을 안하므로 기기에 볼륨 저장하고 알람이 울릴 때 해당 볼륨으로 변경
+    prefs.setDouble('volume', volume);
+
     Alarm.set(alarmSettings: buildAlarmSettings()).then((res) {
       if (res) Get.back(result: true);
     });
@@ -194,12 +201,18 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return SimplePopupDialog(
-            title: 'SOUND',
-            content: assetAudioList,
-            selectedAudio: assetAudio,
-            onChangeAudio: (asset) => _onChangeAudio(asset),
-          );
+          return StatefulBuilder(builder: (context, bottomState) {
+            return SimplePopupDialog(
+              title: 'SOUND',
+              content: assetAudioList,
+              selectedAudio: assetAudio,
+              volume: volume,
+              vibrate: vibrate,
+              onChangeAudio: (asset) => _onChangeAudio(asset),
+              onChangeVibrate: (value) => _onChangeVibrate(value, bottomState),
+              onChangeVolume: (value) => _onChangeVolume(value, bottomState),
+            );
+          });
         });
   }
 
@@ -222,5 +235,13 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
 
   void onChangeShowNotification(value) {
     setState(() => showNotification = value);
+  }
+
+  void _onChangeVolume(value, bottomState) {
+    bottomState(() => volume = value);
+  }
+
+  void _onChangeVibrate(value, bottomState) {
+    bottomState(() => vibrate = value);
   }
 }

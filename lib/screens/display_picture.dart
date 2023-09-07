@@ -139,12 +139,6 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                             Text(currentTime,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
-                                    shadows: [
-                                      Shadow(
-                                          color: Colors.black87,
-                                          offset: Offset(1, 1),
-                                          blurRadius: 4)
-                                    ],
                                     fontWeight: FontWeight.bold,
                                     fontSize: 48,
                                     fontFamily: 'Pretendard',
@@ -153,12 +147,6 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                             Text(currentDate,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
-                                    shadows: [
-                                      Shadow(
-                                          color: Colors.black87,
-                                          offset: Offset(1, 1),
-                                          blurRadius: 4)
-                                    ],
                                     fontWeight: FontWeight.bold,
                                     fontSize: 24,
                                     fontFamily: 'Pretendard',

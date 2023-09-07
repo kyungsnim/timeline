@@ -1,9 +1,10 @@
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:alarm/alarm.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:timeline/_importer.dart';
 
 import 'display_picture.dart';
@@ -30,9 +31,63 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   String currentTime = '';
   String currentDate = '';
 
+  static const AdRequest request = AdRequest(
+    keywords: <String>['alarm, miracle'],
+    nonPersonalizedAds: true,
+  );
+  InterstitialAd? _interstitialAd;
+  int _numInterstitialLoadAttempts = 0;
+  int maxFailedLoadAttempts = 3;
+
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: AdHelper.interstitialAdUnitId,
+        request: request,
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            print('$ad loaded');
+            _interstitialAd = ad;
+            _numInterstitialLoadAttempts = 0;
+            _interstitialAd!.setImmersiveMode(true);
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error.');
+            _numInterstitialLoadAttempts += 1;
+            _interstitialAd = null;
+            if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
+              _createInterstitialAd();
+            }
+          },
+        ));
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd == null) {
+      print('Warning: attempt to show interstitial before loaded.');
+      return;
+    }
+    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (InterstitialAd ad) =>
+          print('ad onAdShowedFullScreenContent.'),
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        print('$ad onAdDismissedFullScreenContent.');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        print('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+    );
+    _interstitialAd!.show();
+    _interstitialAd = null;
+  }
+
   @override
   void initState() {
     super.initState();
+    _createInterstitialAd();
     // 카메라의 현재 출력물을 보여주기 위해 CameraController를 생성합니다.
     _controller = CameraController(
       // 이용 가능한 카메라 목록에서 특정 카메라를 가져옵니다.
@@ -146,6 +201,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   void dispose() {
     // 위젯의 생명주기 종료시 컨트롤러 역시 해제시켜줍니다.
     _controller.dispose();
+    _interstitialAd?.dispose();
     super.dispose();
   }
 
@@ -203,12 +259,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                           Text(currentTime,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
-                                  shadows: [
-                                    Shadow(
-                                        color: Colors.black87,
-                                        offset: Offset(1, 1),
-                                        blurRadius: 4)
-                                  ],
                                   fontWeight: FontWeight.bold,
                                   fontSize: 48,
                                   fontFamily: 'Pretendard',
@@ -217,12 +267,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                           Text(currentDate,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
-                                  shadows: [
-                                    Shadow(
-                                        color: Colors.black87,
-                                        offset: Offset(1, 1),
-                                        blurRadius: 4)
-                                  ],
                                   fontWeight: FontWeight.bold,
                                   fontSize: 24,
                                   fontFamily: 'Pretendard',
@@ -244,6 +288,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                     path = xFile.path;
                                     _loading = false;
                                   });
+
+                                  _showInterstitialAd();
 
                                   // 사진을 촬영하면, 새로운 화면으로 넘어갑니다.
                                   await Get.to(() => DisplayCaptureScreen(

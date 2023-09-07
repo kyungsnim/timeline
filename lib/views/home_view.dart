@@ -1,9 +1,10 @@
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:timeline/_importer.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   late List<AlarmSettings> alarms;
   Function loadAlarms;
   Function navigateToAlarmScreen;
@@ -16,6 +17,35 @@ class HomeView extends StatelessWidget {
       required this.onTapSetAlarm,
       super.key});
 
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  BannerAd? _bannerAd;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // TODO: Load a banner ad
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +64,7 @@ class HomeView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 50),
-                  alarms.isNotEmpty
+                  widget.alarms.isNotEmpty
                       ? const Column(
                           children: [
                             Text(
@@ -70,16 +100,16 @@ class HomeView extends StatelessWidget {
                           ),
                         ),
                   const Spacer(),
-                  alarms.isNotEmpty
+                  widget.alarms.isNotEmpty
                       ? ExampleAlarmTile(
-                          key: Key(alarms[0].id.toString()),
+                          key: Key(widget.alarms[0].id.toString()),
                           title: TimeOfDay(
-                            hour: alarms[0].dateTime.hour,
-                            minute: alarms[0].dateTime.minute,
+                            hour: widget.alarms[0].dateTime.hour,
+                            minute: widget.alarms[0].dateTime.minute,
                           ).format(context),
                           onPressed: () {},
                           onDismissed: () {
-                            Alarm.stop(alarms[0].id).then((_) => loadAlarms());
+                            Alarm.stop(widget.alarms[0].id).then((_) => widget.loadAlarms());
                           },
                         )
                       : Text('설정된 알람이 없어요!',
@@ -97,9 +127,9 @@ class HomeView extends StatelessWidget {
                               ])),
                   const Spacer(),
                   GestureDetector(
-                    onTap: () => alarms.isNotEmpty
-                        ? navigateToAlarmScreen(alarms[0])
-                        : onTapSetAlarm(),
+                    onTap: () => widget.alarms.isNotEmpty
+                        ? widget.navigateToAlarmScreen(widget.alarms[0])
+                        : widget.onTapSetAlarm(),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
@@ -107,7 +137,7 @@ class HomeView extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 55, vertical: 12),
-                      child: Text(alarms.isNotEmpty ? '수정' : '알람 맞추기',
+                      child: Text(widget.alarms.isNotEmpty ? '수정' : '알람 맞추기',
                           style: const TextStyle(
                             color: textColor,
                             fontSize: 20,
@@ -116,7 +146,17 @@ class HomeView extends StatelessWidget {
                           )),
                     ),
                   ),
-                  const SizedBox(height: 120),
+                  const SizedBox(height: 40),
+                  if (_bannerAd != null)
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        width: _bannerAd!.size.width.toDouble(),
+                        height: _bannerAd!.size.height.toDouble(),
+                        child: AdWidget(ad: _bannerAd!),
+                      ),
+                    ),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),

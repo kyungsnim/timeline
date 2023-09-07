@@ -21,11 +21,6 @@ class EditAlarmPresenter extends StatefulWidget {
 }
 
 class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
-  static const AdRequest request = AdRequest(
-    keywords: <String>['alarm, miracle'],
-    nonPersonalizedAds: true,
-  );
-
   bool loading = false;
 
   late bool creating;
@@ -48,9 +43,6 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
 
   VolumeController volumeController = VolumeController();
   AudioPlayer audioPlayer = AudioPlayer();
-  InterstitialAd? _interstitialAd;
-  int _numInterstitialLoadAttempts = 0;
-  int maxFailedLoadAttempts = 3;
 
   bool isToday() {
     final now = DateTime.now();
@@ -74,14 +66,12 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
   @override
   void dispose() {
     audioPlayer.dispose();
-    _interstitialAd?.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    _createInterstitialAd();
     creating = widget.alarmSettings == null;
 
     getVolume();
@@ -111,30 +101,6 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
           .replaceAll('assets/', '')
           .replaceAll('.mp3', '');
     }
-  }
-
-  void _createInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId: Platform.isAndroid
-            ? 'ca-app-pub-3940256099942544/1033173712'
-            : 'ca-app-pub-3940256099942544/4411468910',
-        request: request,
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
-            _interstitialAd = ad;
-            _numInterstitialLoadAttempts = 0;
-            _interstitialAd!.setImmersiveMode(true);
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            print('InterstitialAd failed to load: $error.');
-            _numInterstitialLoadAttempts += 1;
-            _interstitialAd = null;
-            if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
-              _createInterstitialAd();
-            }
-          },
-        ));
   }
 
   Future<void> pickTime() async {
@@ -213,33 +179,9 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
     prefs.setDouble('volume', volume);
 
     Alarm.set(alarmSettings: buildAlarmSettings()).then((res) {
-      _showInterstitialAd();
       if (res) Get.back(result: true);
     });
     setState(() => loading = false);
-  }
-
-  void _showInterstitialAd() {
-    if (_interstitialAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
-      return;
-    }
-    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
-        ad.dispose();
-        _createInterstitialAd();
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose();
-        _createInterstitialAd();
-      },
-    );
-    _interstitialAd!.show();
-    _interstitialAd = null;
   }
 
   void deleteAlarm() {

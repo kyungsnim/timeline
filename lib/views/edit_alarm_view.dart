@@ -70,9 +70,9 @@ class EditAlarmView extends StatelessWidget {
                     'MIRACLE MORNING ALARM',
                     style: TextStyle(
                       color: whiteColor,
-                      fontSize: 24,
+                      fontSize: 18,
                       fontWeight: FontWeight.w400,
-                      fontFamily: 'Nats',
+                      fontFamily: 'Pretendard',
                     ),
                   ),
                   const Spacer(),
@@ -92,6 +92,7 @@ class EditAlarmView extends StatelessWidget {
                           )
                         ]),
                   ),
+                  const SizedBox(height: 10),
                   RawMaterialButton(
                     onPressed: () => pickTime(),
                     child: Container(
@@ -99,9 +100,9 @@ class EditAlarmView extends StatelessWidget {
                         selectedTime.format(context),
                         style: TextStyle(
                           color: whiteColor,
-                          fontFamily: 'Nats',
-                          fontSize: 64,
-                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Pretendard',
+                          fontSize: 48,
+                          fontWeight: FontWeight.w600,
                           shadows: [
                             Shadow(
                               offset: const Offset(0, 0),

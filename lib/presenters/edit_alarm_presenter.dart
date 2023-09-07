@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:alarm/alarm.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timeline/_importer.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 class EditAlarmPresenter extends StatefulWidget {
   final AlarmSettings? alarmSettings;
@@ -16,6 +21,11 @@ class EditAlarmPresenter extends StatefulWidget {
 }
 
 class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
+  static const AdRequest request = AdRequest(
+    keywords: <String>['alarm, miracle'],
+    nonPersonalizedAds: true,
+  );
+
   bool loading = false;
 
   late bool creating;
@@ -36,6 +46,12 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
     'star_wars',
   ];
 
+  VolumeController volumeController = VolumeController();
+  AudioPlayer audioPlayer = AudioPlayer();
+  InterstitialAd? _interstitialAd;
+  int _numInterstitialLoadAttempts = 0;
+  int maxFailedLoadAttempts = 3;
+
   bool isToday() {
     final now = DateTime.now();
     final dateTime = DateTime(
@@ -51,10 +67,24 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
     return now.isBefore(dateTime);
   }
 
+  void getVolume() async{
+    volume = await volumeController.getVolume();
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
+    _createInterstitialAd();
     creating = widget.alarmSettings == null;
+
+    getVolume();
 
     if (creating) {
       final dt = DateTime.now().add(const Duration(minutes: 1));
@@ -83,6 +113,30 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
     }
   }
 
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: Platform.isAndroid
+            ? 'ca-app-pub-3940256099942544/1033173712'
+            : 'ca-app-pub-3940256099942544/4411468910',
+        request: request,
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            print('$ad loaded');
+            _interstitialAd = ad;
+            _numInterstitialLoadAttempts = 0;
+            _interstitialAd!.setImmersiveMode(true);
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error.');
+            _numInterstitialLoadAttempts += 1;
+            _interstitialAd = null;
+            if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
+              _createInterstitialAd();
+            }
+          },
+        ));
+  }
+
   Future<void> pickTime() async {
     await Navigator.of(context).push(
       showPicker(
@@ -91,27 +145,25 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
         sunrise: TimeOfDay(hour: 6, minute: 0),
         // optional
         sunset: TimeOfDay(hour: 18, minute: 0),
+        accentColor: mainButtonColor,
         // optional
-        duskSpanInMinutes: 120,
         // optional
         onChange: (Time newTime) {
           setState(() {
             selectedTime = newTime;
           });
         },
-
-        accentColor: backgroundColor,
         okText: '확인',
         okStyle: const TextStyle(
           fontSize: 20,
-          color: backgroundColor,
+          color: mainButtonColor,
           fontWeight: FontWeight.bold,
           fontFamily: 'Pretendard',
         ),
         cancelText: '취소',
         cancelStyle: const TextStyle(
           fontSize: 20,
-          color: backgroundColor,
+          color: Colors.grey,
           fontWeight: FontWeight.bold,
           fontFamily: 'Pretendard',
         ),
@@ -161,9 +213,33 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
     prefs.setDouble('volume', volume);
 
     Alarm.set(alarmSettings: buildAlarmSettings()).then((res) {
+      _showInterstitialAd();
       if (res) Get.back(result: true);
     });
     setState(() => loading = false);
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd == null) {
+      print('Warning: attempt to show interstitial before loaded.');
+      return;
+    }
+    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (InterstitialAd ad) =>
+          print('ad onAdShowedFullScreenContent.'),
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        print('$ad onAdDismissedFullScreenContent.');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        print('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+    );
+    _interstitialAd!.show();
+    _interstitialAd = null;
   }
 
   void deleteAlarm() {
@@ -197,28 +273,39 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
     );
   }
 
-  void onChangeAudio(value) {
-    showDialog(
+  void onChangeAudio(value) async {
+    await showDialog(
         context: context,
         builder: (BuildContext context) {
           return StatefulBuilder(builder: (context, bottomState) {
             return SimplePopupDialog(
+              audioPlayer: audioPlayer,
               title: 'SOUND',
               content: assetAudioList,
               selectedAudio: assetAudio,
               volume: volume,
               vibrate: vibrate,
-              onChangeAudio: (asset) => _onChangeAudio(asset),
+              onChangeAudio: (asset) => _onChangeAudio(asset, bottomState),
               onChangeVibrate: (value) => _onChangeVibrate(value, bottomState),
               onChangeVolume: (value) => _onChangeVolume(value, bottomState),
             );
           });
         });
+
+    if (audioPlayer.state == PlayerState.playing) {
+      audioPlayer.pause();
+    }
   }
 
-  void _onChangeAudio(asset) {
-    setState(() => assetAudio = asset!);
-    Get.back();
+  void _onChangeAudio(asset, bottomState) {
+    bottomState(() => assetAudio = asset!);
+
+    if (audioPlayer.state == PlayerState.playing) {
+      audioPlayer.pause();
+    }
+    audioPlayer.play(AssetSource('$assetAudio.mp3'));
+    /// 팝업 닫지 않음
+    // Get.back();
   }
 
   void onChangeLoopAudio(value) {
@@ -238,7 +325,10 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
   }
 
   void _onChangeVolume(value, bottomState) {
-    bottomState(() => volume = value);
+    bottomState(() {
+      volumeController.setVolume(value);
+      volume = value;
+    });
   }
 
   void _onChangeVibrate(value, bottomState) {

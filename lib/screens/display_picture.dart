@@ -146,9 +146,10 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                                           blurRadius: 4)
                                     ],
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 64,
-                                    fontFamily: 'Nats',
+                                    fontSize: 48,
+                                    fontFamily: 'Pretendard',
                                     color: Colors.white)),
+                            const SizedBox(height: 10),
                             Text(currentDate,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
@@ -162,7 +163,7 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                                     fontSize: 24,
                                     fontFamily: 'Pretendard',
                                     color: Colors.white)),
-                            const SizedBox(height: 160),
+                            const SizedBox(height: 174),
                           ],
                         )
                       ],
@@ -241,7 +242,7 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                             ),
                       ),
                       const SizedBox(height: 12),
-                      GestureDetector(
+                      shareImagePath != null ? GestureDetector(
                         onTap: () => Get.off(() => const HomePresenter()),
                         child: const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -260,7 +261,7 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
                             ),
                           ),
                         ),
-                      ),
+                      ) : SizedBox(),
                       const SizedBox(height: 52),
                     ],
                   ),
@@ -276,6 +277,6 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
         shareImagePath!.readAsBytesSync(), // byteData.buffer.asUint8List(),
         quality: 100);
     Fluttertoast.showToast(msg: '저장 완료', gravity: ToastGravity.CENTER);
-    Get.off(() => const HomePresenter());
+    // Get.off(() => const HomePresenter());
   }
 }

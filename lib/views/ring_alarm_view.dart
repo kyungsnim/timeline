@@ -53,11 +53,12 @@ class _RingAlarmViewState extends State<RingAlarmView> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
-                      fontFamily: 'Nats',
+                      fontSize: 18,
+                      fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w500,
                     ),
                   ),
+                  const SizedBox(height: 10),
                   const Text(
                     '한 번에 일어나세요!',
                     textAlign: TextAlign.center,
@@ -72,9 +73,9 @@ class _RingAlarmViewState extends State<RingAlarmView> {
                   Text(
                     convertDateTime(),
                     style: TextStyle(
-                        fontSize: 64,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: 'Nats',
+                        fontSize: 48,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Pretendard',
                         color: Colors.white,
                         shadows: [
                           Shadow(

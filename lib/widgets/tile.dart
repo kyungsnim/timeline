@@ -43,9 +43,9 @@ class ExampleAlarmTile extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 64,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Nats',
+                  fontSize: 48,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Pretendard',
                   color: Colors.white,
                   shadows: [
                     Shadow(

@@ -1,8 +1,10 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SimplePopupDialog extends StatelessWidget {
+  final AudioPlayer audioPlayer;
   final String title;
   final List<String> content;
   final String selectedAudio;
@@ -14,6 +16,7 @@ class SimplePopupDialog extends StatelessWidget {
 
   const SimplePopupDialog({
     Key? key,
+    required this.audioPlayer,
     required this.title,
     required this.content,
     required this.selectedAudio,
@@ -74,7 +77,12 @@ class SimplePopupDialog extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       GestureDetector(
-                        onTap: () => Get.back(),
+                        onTap: () {
+                          Get.back();
+                          if (audioPlayer.state == PlayerState.playing) {
+                            audioPlayer.pause();
+                          }
+                        },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 10),

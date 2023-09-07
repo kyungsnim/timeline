@@ -43,9 +43,11 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     getCurrentTime();
     // 다음으로 controller를 초기화합니다. 초기화 메서드는 Future를 반환합니다.
     _initializeControllerFuture = _controller.initialize();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      saveAlarm();
-    });
+
+    /// 기존 알람으로 동일하게 설정 - 고객 요청으로 주석처리
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   saveAlarm();
+    // });
   }
 
   AlarmSettings buildAlarmSettings() {
@@ -173,9 +175,9 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                               'LOADING',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 36,
+                                fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                fontFamily: 'Nats',
+                                fontFamily: 'Pretendard',
                               ),
                             ),
                             SizedBox(height: 20),
@@ -208,9 +210,10 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                                         blurRadius: 4)
                                   ],
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 64,
-                                  fontFamily: 'Nats',
+                                  fontSize: 48,
+                                  fontFamily: 'Pretendard',
                                   color: Colors.white)),
+                          const SizedBox(height: 8),
                           Text(currentDate,
                               textAlign: TextAlign.center,
                               style: const TextStyle(

@@ -42,11 +42,12 @@ class HomeView extends StatelessWidget {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 20,
-                                fontFamily: 'Nats',
+                                fontSize: 18,
+                                fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
+                            SizedBox(height: 10),
                             Text(
                               '이 시간에 깨워줄게요',
                               textAlign: TextAlign.center,
@@ -63,9 +64,9 @@ class HomeView extends StatelessWidget {
                           'MIRACLE MORNING ALARM',
                           style: TextStyle(
                             color: whiteColor,
-                            fontSize: 24,
+                            fontSize: 18,
                             fontWeight: FontWeight.w400,
-                            fontFamily: 'Nats',
+                            fontFamily: 'Pretendard',
                           ),
                         ),
                   const Spacer(),
@@ -85,8 +86,8 @@ class HomeView extends StatelessWidget {
                           style: TextStyle(
                               color: whiteColor,
                               fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'PretendardBold',
                               shadows: [
                                 Shadow(
                                   offset: const Offset(0, 0),

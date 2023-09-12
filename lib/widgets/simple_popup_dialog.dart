@@ -113,7 +113,7 @@ class SimplePopupDialog extends StatelessWidget {
                   Flexible(
                     child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: 5,
+                      itemCount: 7,
                       itemBuilder: (BuildContext context, int index) {
                         return GestureDetector(
                           onTap: () => onChangeAudio(content[index]),

@@ -7,7 +7,7 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="timeline"
+        android:label="미라클모닝"
         android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"

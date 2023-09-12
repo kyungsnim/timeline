@@ -34,11 +34,13 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
   // late TimeOfDay selectedTime;
   late Time selectedTime;
   List<String> assetAudioList = [
-    'marimba',
-    'mozart',
-    'nokia',
-    'one_piece',
-    'star_wars',
+    '삐삐삐(보통)',
+    '삐삐삐(빠르게)',
+    '레인보우',
+    '따르릉',
+    'ringtone',
+    '꼬끼오',
+    '귀뚜라미',
   ];
 
   VolumeController volumeController = VolumeController();
@@ -84,7 +86,7 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
       vibrate = true;
       volumeMax = true;
       showNotification = true;
-      assetAudio = 'marimba';
+      assetAudio = '삐삐삐(보통)';
     } else {
       selectedTime = Time(
         hour: widget.alarmSettings!.dateTime.hour,
@@ -97,9 +99,22 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
           widget.alarmSettings!.notificationTitle!.isNotEmpty &&
           widget.alarmSettings!.notificationBody != null &&
           widget.alarmSettings!.notificationBody!.isNotEmpty;
-      assetAudio = widget.alarmSettings!.assetAudioPath
+
+      switch (widget.alarmSettings!.assetAudioPath
           .replaceAll('assets/', '')
-          .replaceAll('.mp3', '');
+          .replaceAll('.mp3', '')) {
+        case 'audio_1': assetAudio = '삐삐삐(보통)'; break;
+        case 'audio_2': assetAudio = '삐삐삐(빠르게)'; break;
+        case 'audio_3': assetAudio = '레인보우'; break;
+        case 'audio_4': assetAudio = '따르릉'; break;
+        case 'audio_5': assetAudio = 'ringtone'; break;
+        case 'audio_6': assetAudio = '꼬끼오'; break;
+        case 'audio_7': assetAudio = '귀뚜라미'; break;
+      }
+
+      // assetAudio = widget.alarmSettings!.assetAudioPath
+      //     .replaceAll('assets/', '')
+      //     .replaceAll('.mp3', '');
     }
   }
 
@@ -156,6 +171,18 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
       dateTime = dateTime.add(const Duration(days: 1));
     }
 
+    String assetAudioPath = '';
+
+    switch(assetAudio) {
+      case '삐삐삐(보통)': assetAudioPath = 'assets/audio_1.mp3'; break;
+      case '삐삐삐(빠르게)': assetAudioPath = 'assets/audio_2.mp3'; break;
+      case '레인보우': assetAudioPath = 'assets/audio_3.mp3'; break;
+      case '따르릉': assetAudioPath = 'assets/audio_4.mp3';  break;
+      case 'ringtone': assetAudioPath = 'assets/audio_5.mp3'; break;
+      case '꼬끼오': assetAudioPath = 'assets/audio_6.mp3'; break;
+      case '귀뚜라미': assetAudioPath = 'assets/audio_7.mp3'; break;
+    }
+
     final alarmSettings = AlarmSettings(
       id: id,
       dateTime: dateTime,
@@ -165,7 +192,7 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
       // volumeMax,
       notificationTitle: showNotification ? '알람' : null,
       notificationBody: showNotification ? '일어나세요!' : null,
-      assetAudioPath: 'assets/$assetAudio.mp3',
+      assetAudioPath: assetAudioPath,
       stopOnNotificationOpen: false,
     );
     return alarmSettings;
@@ -245,7 +272,20 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
     if (audioPlayer.state == PlayerState.playing) {
       audioPlayer.pause();
     }
-    audioPlayer.play(AssetSource('$assetAudio.mp3'));
+
+    String assetAudioPath = '';
+
+    switch(assetAudio) {
+      case '삐삐삐(보통)': assetAudioPath = 'audio_1.mp3'; break;
+      case '삐삐삐(빠르게)': assetAudioPath = 'audio_2.mp3'; break;
+      case '레인보우': assetAudioPath = 'audio_3.mp3'; break;
+      case '따르릉': assetAudioPath = 'audio_4.mp3';  break;
+      case 'ringtone': assetAudioPath = 'audio_5.mp3'; break;
+      case '꼬끼오': assetAudioPath = 'audio_6.mp3'; break;
+      case '귀뚜라미': assetAudioPath = 'audio_7.mp3'; break;
+    }
+
+    audioPlayer.play(AssetSource(assetAudioPath));
     /// 팝업 닫지 않음
     // Get.back();
   }

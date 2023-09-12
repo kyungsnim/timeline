@@ -25,6 +25,7 @@ dependencies:
   volume_controller: ^2.0.7
   audioplayers: ^5.1.0
   google_mobile_ads: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
 
   cupertino_icons: ^1.0.2
 
@@ -41,11 +42,13 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
-    - assets/mozart.mp3
-    - assets/nokia.mp3
-    - assets/one_piece.mp3
-    - assets/star_wars.mp3
-    - assets/marimba.mp3
+    - assets/audio_1.mp3
+    - assets/audio_2.mp3
+    - assets/audio_3.mp3
+    - assets/audio_4.mp3
+    - assets/audio_5.mp3
+    - assets/audio_6.mp3
+    - assets/audio_7.mp3
 
   fonts:
     - family: PretendardBold

@@ -28,7 +28,6 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
 
-    // TODO: Load a banner ad
     BannerAd(
       adUnitId: AdHelper.bannerAdUnitId,
       request: AdRequest(),
@@ -45,6 +44,14 @@ class _HomeViewState extends State<HomeView> {
         },
       ),
     ).load();
+  }
+
+  @override
+  void dispose() {
+    if (_bannerAd != null) {
+      _bannerAd!.dispose();
+    }
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {

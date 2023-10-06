@@ -103,7 +103,7 @@ class _DisplayCaptureScreenState extends State<DisplayCaptureScreen> {
       if (image != null) {
         final directory = await getApplicationDocumentsDirectory();
         // final directory = Directory('/storage/emulated/0/DCIM');
-        shareImagePath = await File('${directory.path}/image.png').create();
+        shareImagePath = await File('${directory.path}/image.jpg').create();
         await shareImagePath!.writeAsBytes(image);
 
         /// Share Plugin

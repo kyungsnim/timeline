@@ -14,6 +14,7 @@ class EditAlarmView extends StatelessWidget {
   bool loading;
   final AlarmSettings? alarmSettings;
   late TimeOfDay selectedTime;
+  final List<bool> loopDayList;
   Function isToday;
   Function saveAlarm;
   Function pickTime;
@@ -23,6 +24,7 @@ class EditAlarmView extends StatelessWidget {
   Function onChangeVolumeMax;
   Function onChangeShowNotification;
   Function deleteAlarm;
+  final Function onTapLoopday;
 
   EditAlarmView(
       {this.mode,
@@ -38,12 +40,14 @@ class EditAlarmView extends StatelessWidget {
       required this.isToday,
       required this.saveAlarm,
       required this.pickTime,
+      required this.loopDayList,
       required this.onChangeAudio,
       required this.onChangeLoopAudio,
       required this.onChangeVibrate,
       required this.onChangeVolumeMax,
       required this.onChangeShowNotification,
       required this.deleteAlarm,
+      required this.onTapLoopday,
       super.key});
 
   @override
@@ -115,6 +119,14 @@ class EditAlarmView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 50),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 12),
+                    child: Row(
+                      children: [
+                        buildTitleText('소리'),
+                      ],
+                    ),
+                  ),
                   GestureDetector(
                     onTap: () => onChangeAudio('1'),
                     child: Container(
@@ -151,29 +163,44 @@ class EditAlarmView extends StatelessWidget {
                               fontFamily: 'Pretendard',
                             ),
                           ),
-                          // DropdownButton(
-                          //   icon: Icon(
-                          //     Icons.arrow_drop_down,
-                          //     color: Colors.white,
-                          //   ),
-                          //   style: const TextStyle(
-                          //     color: whiteColor,
-                          //   ),
-                          //   value: assetAudio,
-                          //   underline: SizedBox(),
-                          //   items: [
-                          //     _buildDropdownItem('assets/marimba.mp3', 'Marimba'),
-                          //     _buildDropdownItem('assets/nokia.mp3', 'Nokia'),
-                          //     _buildDropdownItem('assets/mozart.mp3', 'Mozart'),
-                          //     _buildDropdownItem(
-                          //         'assets/star_wars.mp3', 'Star Wars'),
-                          //     _buildDropdownItem(
-                          //         'assets/one_piece.mp3', 'One Piece'),
-                          //   ],
-                          //   onChanged: (value) => onChangeAudio(value!),
-                          // ),
                         ],
                       ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 12),
+                    child: Row(
+                      children: [
+                        buildTitleText('반복'),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(
+                          color: Colors.white,
+                        ),
+                        color: Colors.white.withOpacity(0.2)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        buildWeekdayText('일', 0),
+                        const SizedBox(width: 6),
+                        buildWeekdayText('월', 1),
+                        const SizedBox(width: 6),
+                        buildWeekdayText('화', 2),
+                        const SizedBox(width: 6),
+                        buildWeekdayText('수', 3),
+                        const SizedBox(width: 6),
+                        buildWeekdayText('목', 4),
+                        const SizedBox(width: 6),
+                        buildWeekdayText('금', 5),
+                        const SizedBox(width: 6),
+                        buildWeekdayText('토', 6),
+                      ],
                     ),
                   ),
                   Spacer(),
@@ -256,6 +283,45 @@ class EditAlarmView extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildTitleText(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: whiteColor,
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Pretendard',
+        ),
+      ),
+    );
+  }
+
+  Widget buildWeekdayText(String text, int weekday) {
+
+    return GestureDetector(
+      onTap: () => onTapLoopday(weekday),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+          border: Border.all(color: Colors.white,),
+          color: loopDayList[weekday] ? Colors.pinkAccent.withOpacity(0.5) : Colors.white.withOpacity(0),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: whiteColor,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Pretendard',
+          ),
+        ),
       ),
     );
   }

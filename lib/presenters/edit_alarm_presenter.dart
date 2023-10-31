@@ -46,6 +46,8 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
   VolumeController volumeController = VolumeController();
   AudioPlayer audioPlayer = AudioPlayer();
 
+  List<bool> loopDayList = List.generate(7, (index) => false);
+
   bool isToday() {
     final now = DateTime.now();
     final dateTime = DateTime(
@@ -198,6 +200,64 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
     return alarmSettings;
   }
 
+  AlarmSettings buildAlarmSettingsList() {
+    final now = DateTime.now();
+
+    DateTime dateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      selectedTime.hour,
+      selectedTime.minute,
+      0,
+      0,
+    );
+    if (dateTime.isBefore(DateTime.now())) {
+      dateTime = dateTime.add(const Duration(days: 1));
+    }
+
+    final id = creating
+        ? DateTime.now().millisecondsSinceEpoch % 100000
+        : widget.alarmSettings!.id;
+
+    /// 월(1), 화(2), 수(3), 목(4), 금(5), 토(6), 일(7)
+    for (int i = 0; i < loopDayList.length; i++) {
+      if (loopDayList[i]) {
+
+      }
+    }
+
+    if (dateTime.weekday == 1) {
+
+    }
+
+    String assetAudioPath = '';
+
+    switch(assetAudio) {
+      case '삐삐삐(보통)': assetAudioPath = 'assets/audio_1.mp3'; break;
+      case '삐삐삐(빠르게)': assetAudioPath = 'assets/audio_2.mp3'; break;
+      case '레인보우': assetAudioPath = 'assets/audio_3.mp3'; break;
+      case '따르릉': assetAudioPath = 'assets/audio_4.mp3';  break;
+      case 'ringtone': assetAudioPath = 'assets/audio_5.mp3'; break;
+      case '꼬끼오': assetAudioPath = 'assets/audio_6.mp3'; break;
+      case '귀뚜라미': assetAudioPath = 'assets/audio_7.mp3'; break;
+    }
+
+    final alarmSettings = AlarmSettings(
+      id: id,
+      dateTime: dateTime,
+      loopAudio: loopAudio,
+      vibrate: vibrate,
+      volumeMax: false,
+      // volumeMax,
+      notificationTitle: showNotification ? '알람' : null,
+      notificationBody: showNotification ? '일어나세요!' : null,
+      assetAudioPath: assetAudioPath,
+      stopOnNotificationOpen: false,
+    );
+    return alarmSettings;
+  }
+
   void saveAlarm() async {
     setState(() => loading = true);
     final prefs = await SharedPreferences.getInstance();
@@ -230,6 +290,7 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
       loading: loading,
       alarmSettings: widget.alarmSettings,
       selectedTime: selectedTime,
+        loopDayList: loopDayList,
       saveAlarm: () => saveAlarm(),
       isToday: () => isToday(),
       pickTime: () => pickTime(),
@@ -239,6 +300,7 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
       onChangeVibrate: (value) => onChangeVibrate(value),
       onChangeVolumeMax: (value) => onChangeVolumeMax(value),
       onChangeShowNotification: (value) => onChangeShowNotification(value),
+        onTapLoopday: (index) => onTapLoopday(index),
     );
   }
 
@@ -315,5 +377,11 @@ class _EditAlarmPresenterState extends State<EditAlarmPresenter> {
 
   void _onChangeVibrate(value, bottomState) {
     bottomState(() => vibrate = value);
+  }
+
+  void onTapLoopday(int weekday) {
+    setState(() {
+      loopDayList[weekday] = !loopDayList[weekday];
+    });
   }
 }

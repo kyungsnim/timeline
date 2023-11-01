@@ -69,13 +69,19 @@ class _HomePresenterState extends State<HomePresenter> {
     );
   }
 
-  Future<void> navigateToAlarmScreen(AlarmSettings? settings) async {
-    final res = await Get.to(() => EditAlarmPresenter(alarmSettings: settings));
+  /// 기존 단일 알람
+  // Future<void> navigateToAlarmScreen(AlarmSettings? settings) async {
+  //   final res = await Get.to(() => EditAlarmPresenter(alarmSettings: settings));
+  //   if (res != null && res == true) loadAlarms();
+  // }
+
+  Future<void> navigateToAlarmScreen(List<AlarmSettings?> settings) async {
+    final res = await Get.to(() => EditAlarmListPresenter(alarmSettingsList: settings));
     if (res != null && res == true) loadAlarms();
   }
 
   Future<void> onTapSetAlarm() async {
-    final res = await Get.to(() => EditAlarmPresenter(alarmSettings: null));
+    final res = await Get.to(() => EditAlarmListPresenter(alarmSettingsList: []));
     if (res != null && res == true) loadAlarms();
   }
 }

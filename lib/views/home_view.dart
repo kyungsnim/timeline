@@ -135,7 +135,7 @@ class _HomeViewState extends State<HomeView> {
                   const Spacer(),
                   GestureDetector(
                     onTap: () => widget.alarms.isNotEmpty
-                        ? widget.navigateToAlarmScreen(widget.alarms[0])
+                        ? widget.navigateToAlarmScreen(widget.alarms)
                         : widget.onTapSetAlarm(),
                     child: Container(
                       decoration: BoxDecoration(

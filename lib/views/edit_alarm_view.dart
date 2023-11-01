@@ -12,7 +12,6 @@ class EditAlarmView extends StatelessWidget {
   late bool showNotification;
   late String assetAudio;
   bool loading;
-  final AlarmSettings? alarmSettings;
   late TimeOfDay selectedTime;
   final List<bool> loopDayList;
   Function isToday;
@@ -35,7 +34,6 @@ class EditAlarmView extends StatelessWidget {
       required this.showNotification,
       required this.assetAudio,
       required this.loading,
-      required this.alarmSettings,
       required this.selectedTime,
       required this.isToday,
       required this.saveAlarm,
